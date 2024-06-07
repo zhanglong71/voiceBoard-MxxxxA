@@ -83,6 +83,43 @@ int reportConnectWifi(void *arg)
 #endif
 
 static const reportStatusBody_t reportStatusBodyArr[] = {
+#if 1
+    { CINDEX_STANDBY,             "{\"status\":{\"status\":0}}"},              // standby
+    { CINDEX_STANDARD,            "{\"status\":{\"status\":1}}"},              // standard
+    { CINDEX_HIGHPOWER,           "{\"status\":{\"status\":2}}"},              // highPower
+ /****/   
+    { CINDEX_PUMPNORMAL,          "{\"commonFaultDetection\":{\"code\":107}}"},               // pumpNormal
+    { CINDEX_PUMPOVERLOAD,        "{\"commonFaultDetection\":{\"code\":106}}"},               // pumpOverload
+    
+    { CINDEX_ROLLERNORMAL,        "{\"commonFaultDetection\":{\"code\":105}}"},               // normal roller
+    { CINDEX_ROLLEROVERLOAD,      "{\"commonFaultDetection\":{\"code\":104}}"},               // error roller
+    
+    { CINDEX_PUMPNORMAL      ,    "{\"commonFaultDetection\":{\"code\":103}}"},               // same as 107
+    { CINDEX_PUMPCURRENTSMALL,    "{\"commonFaultDetection\":{\"code\":102}}"},
+    
+    { CINDEX_CHARGEREPAIR,        "{\"commonFaultDetection\":{\"code\":101}}"},               // charging fault repaired
+    { CINDEX_CHARGEFAULT,         "{\"commonFaultDetection\":{\"code\":100}}"},               // charging fault
+ /****/   
+    { CINDEX_CLEARWATERNORMAL,    "{\"clearWaterBoxState\":{\"status\":0}}"},  // clear water normal ÀÆœ‰’˝≥£
+    { CINDEX_CLEARWATERSHORTAGE,  "{\"clearWaterBoxState\":{\"status\":1}}"},  // clear water shortage ÀÆœ‰»±ÀÆ
+    
+    { CINDEX_UNCHARGED,           "{\"battery\":{\"charging\":0}}"},           // Œ¥≥‰µÁ
+    { CINDEX_CHARGING,            "{\"battery\":{\"charging\":1}}"},           // ≥‰µÁ÷–
+    { CINDEX_CHARGECOMPLETE,      "{\"battery\":{\"charging\":100}}"},         // ≥‰¬˙
+    
+    { CINDEX_BATTERYNORMAL,       "{\"battery\":{\"alarm\":0}}"},              // µÁ—πµÕ
+    { CINDEX_BATTERYLOW,          "{\"battery\":{\"alarm\":1}}"},              // µÁ—π’˝≥£
+    
+    { CINDEX_BATTERYLEVEL,        "{\"battery\":{\"level\":%u}}"},
+    
+    { CINDEX_VOICEPROMPT_ON,      "{\"Voicepormpt\":{\"switch\":1}}"},         // voice prompt on
+    { CINDEX_VOICEPROMPT_OFF,     "{\"Voicepormpt\":{\"switch\":0}}"},         // voice prompt off
+
+   //  { CINDEX_COMMONFAULTDETECTION,"{\"commonFaultDetection\":{\"code\":0}}"},  // commonFault
+
+    { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // ÁΩëÁªú‰ø°ÊÅØ
+    { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // ÂçáÁ∫ß‰ø°ÊÅØ
+#else
     { CINDEX_CONNECTED,           "{\"status\":{\"status\":1}}"},             // on line
     // { CINDEX_UNKNOW,              "{\"mop\":{\"status\":0}}"},             // unknow Êú™Áü•Áä∂ÊÄÅ(‰∏ªÊú∫Êñ≠ÂºÄÂèäÂÖ∂ÂÆÉ)
     { CINDEX_STANDBY,             "{\"mop\":{\"status\":1}}"},             // standby ÂæÖÊú∫
@@ -109,9 +146,10 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     { CINDEX_CHARGING,            "{\"charge\":{\"status\":2}}"},         // Ê≠£Âú®ÂÖÖÁîµ
     { CINDEX_CHARGECOMPLETE,      "{\"charge\":{\"status\":3}}"},         // ÂÖÖÁîµÂÆåÊàê(Âå∫Âà´‰∏çÂÖÖÁîµÂú∫ÊôØ)
     { CINDEX_CHARGEFAULT,         "{\"charge\":{\"status\":4}}"},         // ÂÖÖÁîµÊïÖÈöú
-
+    
     { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // ÁΩëÁªú‰ø°ÊÅØ
     { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // ÂçáÁ∫ß‰ø°ÊÅØ
+#endif
 };
 
 void reportBatteryLevel(u8 arg)
@@ -488,19 +526,53 @@ RetStatus strim(char* str)
     end = str + strlen(str) - 1;  /** the last valid character **/ 
     ep = end;
     
-    while((sp <= end) && isspace(*sp)) {     /** head blank **/
+    while((sp < end) && isspace(*sp)) {     /** head blank **/
         sp++;
     }
     while((ep >= sp) && isspace(*ep)) {      /** tail blank **/
         ep--;
     }
     len = ((ep < sp) ? 0:((ep - sp) + 1));  /** valid character length **/
-    
-    for (int i = 0; i < len; i++) {
-        str[i] = sp[i];
+
+    if (str != sp) {
+        for (int i = 0; i < len; i++) {
+            str[i] = sp[i];
+        }
     }
     str[len] = '\0';
     return POK;
+}
+
+/**
+ * aaaaaaXbbbbbbYccccccc
+ * ==> strip(abc, '{', '}') ==>
+ * bbbbbb
+ *
+ * str◊÷∑˚¥Æ÷–£¨÷ª±£¡Ù¥”◊Ó◊ÛhchµΩ◊Ó”“µƒtch÷Æº‰µƒ
+ **/
+char strip(char* str, char hch, char tch) 
+{
+    char* hp = NULL;
+    char* tp = NULL;
+    u8 i = 0;
+    
+    if((hp = strchr(str, hch)) == NULL) {   /** Search from the head ==> **/
+        return (0);
+    }
+
+    if((tp = strrchr(str, tch)) == NULL) {  /** Search from the tail <== **/
+        return (0);
+    }
+    if(tp < hp) {
+        return (0);
+    }
+    hp++;
+    *tp = '\0';
+    while((str[i] = hp[i]) != '\0') {
+        i++;
+    }
+
+    return (1);
 }
 
 /**
@@ -675,42 +747,28 @@ void sm_sendData(jsonTL_t* jp)
     {CKEYINDEX_GETMAC,        "getMac"},          /** netInfo mac !!! **/
     {CKEYINDEX_GETRSSI,       "getRssi"},         /** netInfo rssi !!! **/
     {CKEYINDEX_PUTSYNC,       "putSync"},          /** netInfo mac !!! **/
-    // {"\xa5\x5a\x01\x10\x00\x06\x00\x0A\x00\x02", 0, NULL, NULL},
     // {"\"getDevInfo\"", 0},   /**  **/
-    // {"\"heartbeat\"", 0},    /** ‰∏ãÂèëÂøÉË∑≥ÔºÅÈïøÂ∫¶‰∏∫0 **/
 
 #define CTestWIFIkeyIdx (MTABSIZE(commandKeyArr))
 };
-
-#if 0
-const pair_u8s8p_t* getCommandKey(u8 idx)
-{ 
-    if (idx >= MTABSIZE(commandKeyArr)) {
-        return (NULL);
-    }
-    return (&commandKeyArr[idx]);
-}
-
-u8 getCommandKeyArrLen(void)
-{
-    return MTABSIZE(commandKeyArr);
-}
-#endif
 
 /**
  * Correspondence between index and string(body)
  **/
 const pair_u8s8p_t commandBodyArr[] = {
-    {CBODYINDEX_OK,             "ok"},
-    {CBODYINDEX_FAIL,           "fail"},
-    {CBODYINDEX_ERROR,          "error"},
-    {CBODYINDEX_MOP,            "mop"},
-    {CBODYINDEX_ROLLER,         "roller"},
-    {CBODYINDEX_CLEARWATER,     "clearWater"},
-    {CBODYINDEX_PUMP,           "pump"},
-    {CBODYINDEX_BATTERYSTATUS,  "batterystatus"},
-    {CBODYINDEX_CHARGE,         "charge"},
-    {CBODYINDEX_STATUS,         "status"},
+    {CBODYINDEX_OK,                     "ok"},
+    {CBODYINDEX_FAIL,                   "fail"},
+    {CBODYINDEX_ERROR,                  "error"},
+ // {CBODYINDEX_MOP,                    "mop"},
+ // {CBODYINDEX_ROLLER,                 "roller"},
+    {CBODYINDEX_CLEARWATERBOXSTATE,     "clearWaterBoxState"},
+ // {CBODYINDEX_PUMP,                   "pump"},
+    {CBODYINDEX_BATTERY,                "battery"},
+    {CBODYINDEX_CHARGE,                 "charge"},
+    {CBODYINDEX_STATUS,                 "status"},
+    {CBODYINDEX_VOICEPROMPT,            "voicePrompt"},
+    {CBODYINDEX_COMMONFAULTDETECTION,   "commonFaultDetection"},
+    
     {CBODYINDEX_NETINFO,        "netInfo"},
     {CBODYINDEX_UPDATE,         "update"},
     {CBODYINDEX_0,         "0"},
@@ -734,39 +792,23 @@ RetStatus getStringIndexbyString(const pair_u8s8p_t* keyArr, u8 keyArr_len, char
     return PERROR;
 }
 
-#if 0
-RetStatus commandIdx2Message(char index, msgType_t* msg)
-{
-    int i = 0;
-    pair_u8msgType_t const char2msgType[] = {
-        {CKEYINDEX_GETDEVINFO, CGETDEVINFO_REQ},
-        {CKEYINDEX_HEARTBEAT, CHEART_BEAT},
-        {CKEYINDEX_PUTSYNC, CPUT_SYNC},
-    };
-    for (i = 0; i < MTABSIZE(char2msgType); i++) {
-        if (char2msgType[i].first == index) {
-            *msg = char2msgType[i].second;
-            return POK;
-        }
-    }
-    return PERROR;
-}
-#endif
-
 /**
- * ºÏµΩ÷∏∂®µƒkey/len/body, ∂‘”¶µΩ÷∏∂®µƒœ˚œ¢; √ª”–∂‘”¶µΩœ˚œ¢µƒ(CMSG_NONE), –Ë“™Ω¯“ª≤Ω¥¶¿Ì
+ * ºÏµΩ÷∏∂®µƒkey/len/body, ∂‘”¶µΩ÷∏∂®µƒœ˚œ¢; √ª”–∂‘”¶µΩœ˚œ¢µƒ(CMSG_NONE), –Ë“™Ω¯“ª≤Ω ∂±¥¶¿Ì
  **/
 const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
-    {CKEYINDEX_GETCHAR,       3,  CBODYINDEX_MOP,           CGETCHAR_MOP},
-    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_ROLLER,        CGETCHAR_ROLLER},
-    {CKEYINDEX_GETCHAR,       4,  CBODYINDEX_PUMP,          CGETCHAR_PUMP},
-    {CKEYINDEX_GETCHAR,       10, CBODYINDEX_CLEARWATER,    CGETCHAR_CLEARWATER},
-    {CKEYINDEX_GETCHAR,       13, CBODYINDEX_BATTERYSTATUS, CGETCHAR_BATTERY},
-    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_CHARGE,        CGETCHAR_CHARGE},
-    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_STATUS,        CGETCHAR_STATUS},
-    {CKEYINDEX_GETCHAR,       7,  CBODYINDEX_NETINFO,       CGETCHAR_NETINFO},
-    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_UPDATE,        CGETCHAR_UPDATE},
+    {CKEYINDEX_GETCHAR,       3,  CBODYINDEX_MOP,                   CGETCHAR_MOP},              // protocal changed, give up
+    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_ROLLER,                CGETCHAR_ROLLER},           // protocal changed, give up
+    {CKEYINDEX_GETCHAR,       4,  CBODYINDEX_PUMP,                  CGETCHAR_PUMP},             // protocal changed, give up
+    {CKEYINDEX_GETCHAR,       18, CBODYINDEX_CLEARWATERBOXSTATE,    CGETCHAR_CLEARWATERBOXSTATE},
+    {CKEYINDEX_GETCHAR,       7,  CBODYINDEX_BATTERY,               CGETCHAR_BATTERY},
+    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_CHARGE,                CGETCHAR_CHARGE},           // protocal changed, give up    
+    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_STATUS,                CGETCHAR_STATUS},
+    {CKEYINDEX_GETCHAR,       11, CBODYINDEX_VOICEPROMPT,           CGETCHAR_VOICEPROMPT},
+    {CKEYINDEX_GETCHAR,       11, CBODYINDEX_COMMONFAULTDETECTION,  CGETCHAR_COMMONFAULTDETECTION},
     
+    {CKEYINDEX_GETCHAR,       7,  CBODYINDEX_NETINFO,       CGETCHAR_NETINFO},           // protocal changed, give up    
+    {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_UPDATE,        CGETCHAR_UPDATE},            // protocal changed, give up    
+
     {CKEYINDEX_GETDEVINFO,    2,  CBODYINDEX_OK,            CGETDEVINFO_RSPOK},
     {CKEYINDEX_GETDEVINFO,    5,  CBODYINDEX_ERROR,         CGETDEVINFO_RSPERROR},
     
@@ -784,6 +826,7 @@ const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
     {CKEYINDEX_GETDEVINFO,    0,  0,                        CGETDEVINFO_REQ},
  
     {CKEYINDEX_PUTSYNC,       0,  0,                        CPUT_SYNC},
+    {CKEYINDEX_PUTCHAR,       0,  0,                        CMSG_NONE /* CPUTCHAR_VOICEPROMPT */ },  // !!!!!!
     // {CKEYINDEX_SCANWIFI,      0,  0,                        CSCAN_WIFI},
     // {CKEYINDEX_CONNECTWIFI,   0,  0,                        CCONN_WIFI},
     // {CKEYINDEX_PUTWIFISTATUS, 0,  0,                        CMSG_NONE},
@@ -812,7 +855,7 @@ RetStatus KeyBody2Msg(u8 key_idx, u8 body_len, u8 body_idx, msgType_t* msg)
     
     for (i = 0; i < MTABSIZE(identifyKeyBodyMsg); i++) {
         if ((identifyKeyBodyMsg[i].key_idx == key_idx)
-            && (identifyKeyBodyMsg[i].body_len == body_len)
+            && ((identifyKeyBodyMsg[i].body_len == 0) || (identifyKeyBodyMsg[i].body_len == body_len))
             && (identifyKeyBodyMsg[i].body_idx == body_idx)) {
             *msg = identifyKeyBodyMsg[i].msg;
             return POK;
@@ -826,6 +869,7 @@ RetStatus KeyBody2Msg(u8 key_idx, u8 body_len, u8 body_idx, msgType_t* msg)
     {CKEYINDEX_GETIP,         obj_IP},           /** netInfo ip !!! **/
     {CKEYINDEX_GETMAC,        obj_MAC},          /** netInfo mac !!! **/
     {CKEYINDEX_GETRSSI,       obj_RSSI},         /** netInfo rssi !!! **/
+    {CKEYINDEX_PUTCHAR,       obj_PUTCHAR},         /** netInfo rssi !!! **/
 };
 
 RetStatus KeyBody2objType(u8 key_idx, objType_t* objType)
@@ -1000,5 +1044,181 @@ RetStatus reportgetRssi(void)
 {
     char buf[] = "getRssi,0\n";
     return reportNobodyInfo(buf, strlen(buf));
+}
+/*******************************************************************************/
+#if 0
+/*******************************************************************************
+ * remove the head and tail blank character
+ *******************************************************************************/
+void trim(char* str) 
+{
+    char *end, *sp, *ep;
+    int len;
+    
+    sp = str;
+    end = str + strlen(str) - 1;
+    ep = end;
+    
+    while((sp < end) && isspace(*sp)) {   /** head blank **/
+        sp++;
+    }
+    while((ep >= sp) && isspace(*ep)) {    /** tail blank **/
+        ep--;
+    }
+    len = ((ep < sp) ? 0:((ep - sp) + 1));
+    sp[len] = '\0';
+
+    /****/
+    if (str != sp) {
+        for (int i = 0; i < len; i++) {
+            str[i] = sp[i];
+        }
+    }
+}
+#endif
+
+/** find first fch, and last lch **/
+char isCoupled(char* str, char hch, char tch) 
+{
+    char* hp = NULL;
+    char* tp = NULL;
+    
+    if((hp = strchr(str, hch)) == NULL) {   /** Search from the head ==> **/
+        return (0);
+    }
+
+    if((tp = strrchr(str, tch)) == NULL) {  /** Search from the tail <== **/
+        return (0);
+    }
+    if(tp < hp) {
+        return (0);
+    }
+
+    return (1);
+}
+
+/*******************************************************************************
+ * prase json body(JsonParseL0)
+ * 
+ * example:
+ * {key1:value1, key2:value2, ... ,keyn:valuen}
+ *******************************************************************************/
+unsigned char JsonParseL0(char* jsonstrbuf, kv_t* jsonstcarr)
+{
+    u8 j_u8,k_u8,i_u8 = 0;
+    char *p[CMAX1_COUPLE * 2];
+    char *pChar = jsonstrbuf;
+    jsonstcarr[0].KVIndex = 0;
+    // u8Data_t u8Data;
+
+    /** 1. simily as '{ ... }'! **/
+    if((jsonstrbuf[0] != '{') || (jsonstrbuf[strlen(jsonstrbuf) - 1] != '}')) {
+        return(0);
+    }
+
+    jsonstrbuf[strlen(jsonstrbuf) - 1] = '\0';            /** overwrite the start '}' ! **/
+    for(j_u8 = 0; j_u8 < strlen(jsonstrbuf); j_u8++) {    /** overwrite the end '{' ! **/
+        jsonstrbuf[j_u8] = jsonstrbuf[j_u8 + 1];
+    }
+    
+    while((p[i_u8]  = strtok(pChar, ":,")) != NULL) {    /** split the string ... **/
+        i_u8++;
+        pChar = NULL;
+    }
+ 
+    for(j_u8 = 0; ((j_u8 < i_u8/2) && (j_u8 < CMAX1_COUPLE)); j_u8++) {
+        jsonstcarr[j_u8].KVIndex = i_u8/2 - j_u8;
+        strcpy(jsonstcarr[j_u8].key, p[j_u8 * 2]);
+        strcpy(jsonstcarr[j_u8].value, p[j_u8 * 2 + 1]);
+
+        jsonstcarr[j_u8].key[strlen(jsonstcarr[j_u8].key) - 1] = '\0';           /** overwrite the tail '"' ? **/
+        for(k_u8 = 0; k_u8 < strlen(jsonstcarr[j_u8].key); k_u8++)               /** overwrite the head '"' ? **/
+        {
+            jsonstcarr[j_u8].key[k_u8] = jsonstcarr[j_u8].key[k_u8 + 1];
+        }
+    }
+
+    return (1);
+}
+
+
+const pair_u8s8p_t L1KeyArr[] = {
+    {CL1KEYINDEX_VOICEPROMPT,    "voiceprompt"},
+};
+
+const pair_u8s8p_t L0KeyArr[] = {
+    {CL0KEYINDEX_SWITCH,    "switch"},
+};
+
+const pair_u8s8p_t L0ValueArr[] = {
+    {CL0VALUEINDEX_0,    "0"},
+    {CL0VALUEINDEX_1,    "1"},
+};
+
+const Quadruple_u8u8u8Msg_t L1body[] = {
+    {CL0KEYINDEX_SWITCH, CL0VALUEINDEX_0, CL1KEYINDEX_VOICEPROMPT, CMSG_VOPOFF},
+    {CL0KEYINDEX_SWITCH, CL0VALUEINDEX_1, CL1KEYINDEX_VOICEPROMPT, CMSG_VOPON},
+};
+
+RetStatus L1KeyBody2Msg(u8 L0key_idx, u8 L0value_idx, u8 L1key_idx, msgType_t* msg)
+{
+    for (int i = 0; i < MTABSIZE(L1body); i++) {
+        if ((L1body[i].L0Key_idx == L0key_idx) &&
+            (L1body[i].L0Value_idx == L0value_idx) &&
+            (L1body[i].L1Key_idx == L1key_idx)) {
+            *msg = L1body[i].msg;
+            return POK;
+        }
+    }
+    return PERROR;
+}
+
+/********************************
+ * prase json body
+ *
+ * Correspondence between index and string(key)
+ *
+ * example:
+ * {"voiceprompt":{"switch": 1}}
+ *
+ ********************************/
+RetStatus JsonParseL1(char* jsonstrbuf, kv_t* jsonstcarr)
+{
+//identify L1 key
+    char* ptr;
+    char* ptr_body;
+    u8 L1Key_index;
+    u8 L0Key_index;
+    u8 L0Value_index;
+
+    /** step1:  {"voicePrompt":{"switch": 1}} ==>  "voicePrompt":{"switch": 1} **/
+    strip(jsonstrbuf, '{', '}');
+    strim(jsonstrbuf);
+
+    /** step2: split the string! "voicePrompt":{"switch": 1} ==> key:value **/
+    if ((ptr = strchr(jsonstrbuf, ':')) == NULL) {
+        return PERROR;
+    }
+    ptr_body = ptr + 1;
+    *ptr = '\0';
+
+    /** step3: identify L1-key **/
+    if (getStringIndexbyString(L1KeyArr, MTABSIZE(L1KeyArr), jsonstrbuf, &L1Key_index) != POK) {
+        return PERROR;
+    }
+
+    /** step4: **/
+    JsonParseL0(ptr_body, jsonstcarr);
+    for (int i = 0; (jsonstcarr[i].KVIndex > 0); i++) {
+        if ((getStringIndexbyString(L0KeyArr, MTABSIZE(L0KeyArr), jsonstcarr[i].key, &L0Key_index) == POK) &&
+            (getStringIndexbyString(L0ValueArr, MTABSIZE(L0ValueArr), jsonstcarr[i].value, &L0Value_index) == POK)) {
+            msg_t msg;
+            L1KeyBody2Msg(L0Key_index, L0Value_index, L1Key_index, &(msg.msgType));
+            msgq_in_irq(&g_msgq, &msg);
+            return POK;
+        }
+    }
+
+    return (PERROR);
 }
 

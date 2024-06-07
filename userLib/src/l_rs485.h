@@ -13,7 +13,4 @@ void generateVoiceAckVer(char* to, u8* ver);
 void generateVoiceAckOk(char* to, u8 seq);
 void generateVoiceAckErr(char* to, u8 seq);
 
-unsigned char JsonParseL0(char* jsonstrbuf, kv_t* jsonstcarr);
-
-
 #endif

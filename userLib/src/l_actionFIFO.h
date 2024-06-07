@@ -8,7 +8,7 @@ void actionQueueInit(actionQueue_t *q, Timer_t *timer, msgType_t stepMsgType, ms
 int actionQueueIn(actionQueue_t *q, action_t *action);
 int actionQueueOut(actionQueue_t *q, action_t *action);
 
-void vp_stor(unsigned char __vpIdx);
+void vp_stor(u8 __vpIdx);
 void actionDelay(int _delay);
 
 //static void startAction(actionQueue_t *q, action_t * pAction);

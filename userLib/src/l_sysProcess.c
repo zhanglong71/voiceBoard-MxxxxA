@@ -21,6 +21,7 @@ int sysProcess(void *pMsg)
     u8Data_t u8Data;
     int flag;
     int i;
+    int voi = 0;
     
     switch(((msg_t *)pMsg)->msgType)
     {
@@ -31,7 +32,7 @@ int sysProcess(void *pMsg)
         // ???????????????????????????????
         break;
 
-    case CMSG_UART2RX:
+    case CMSG_UART2RX:  // command data from homonary(wifi)
         if(u8FIFOisEmpty(&g_uart2RxQue) != TRUE) {
             /** do something to uart2 data **/
             objType_t objtype = sm_receiveData(g_buf);
@@ -64,6 +65,15 @@ int sysProcess(void *pMsg)
             } else if (objtype == obj_RSSI) {
                 strncpy(g_netInfo.rssi, g_buf, sizeof(g_netInfo.rssi));
                 g_netInfo.flag |= (1 << 3);
+            } else if (objtype == obj_PUTCHAR) {
+                memset(g_KVarr, 0, sizeof(g_KVarr));
+                if (JsonParseL1(g_buf, g_KVarr) == POK) {  // ????????????????????????????????
+                    /** do what? nothing! **/
+                }
+                //if (strstr(g_KVarr[i].key, "switch")) {
+                //    g_componentStatus.voicePrompt = atoi(g_KVarr[i].value);
+                //}
+                AckPutCharStatusByMsgType(((msg_t *)pMsg)->msgType);
             } else { /** (objtype == obj_key) || (objtype == obj_len) || (objtype == obj_body) || (objtype == obj_none) **/
                 /** do nothing **/
             }
@@ -95,7 +105,6 @@ int sysProcess(void *pMsg)
         }
 
         if (JsonParseL0(g_buf, g_KVarr)) {
-            int voi = 0;
             u8 flag = 0;
             u8 src_idx = 0;
             u8 u8Seq = 0;
@@ -139,6 +148,15 @@ int sysProcess(void *pMsg)
             }
         }
         break;
+
+    case CMSG_VOPOFF:
+    case CMSG_VOPON:
+        // u8 voi_idx;
+        setStatusByMsgType(((msg_t *)pMsg)->msgType);
+        getVoiIdxByMsgType(((msg_t *)pMsg)->msgType, (u8*)&voi);
+        vp_stop1();
+        vp_stor((u8)voi);
+        break;
         
     case CMSG_UART2TX:
         sm_sendData(NULL);
@@ -146,14 +164,18 @@ int sysProcess(void *pMsg)
         
     case CGETCHAR_MOP:
     case CGETCHAR_ROLLER:
-    case CGETCHAR_CLEARWATER:
+    case CGETCHAR_CLEARWATERBOXSTATE:
     case CGETCHAR_PUMP:
     case CGETCHAR_BATTERY:
     case CGETCHAR_CHARGE:
     case CGETCHAR_STATUS:
+    case CGETCHAR_VOICEPROMPT:
         AckgetCharStatusByMsgType(((msg_t *)pMsg)->msgType);
         break;
-    
+
+    case CGETCHAR_COMMONFAULTDETECTION:
+        break;
+        
     case CGETCHAR_NETINFO:
         checkAndAckGetCharNetInfo();
         break;
@@ -267,8 +289,8 @@ void checkAndAckGetCharUpdate(void)
 	// {vopIdx_ConnectNo, CINDEX_CHARGING, &(g_componentStatus.mop)},   //=1, //δÁ¬½Ӊ豸//¹²Ӄ//
 	// {vopIdx_Disconnect, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =2,//ɨ±¸ґ¶Ͽª
 	// {vopIdx_Install, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =3,//½øȫɨփģʽ
-	// {vopIdx_VoiceOpen, CINDEX_CHARGING,  &(g_componentStatus.mop)},  // =4,//¿ªƴӯҴ
-	// {vopIdx_VoiceClose, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =5,//¹رՓ
+	{vopIdx_VoiceOpen, CINDEX_VOICEPROMPT_ON,  &(g_componentStatus.voicePrompt)},  // =4,//¿ªƴӯҴ
+	{vopIdx_VoiceClose, CINDEX_VOICEPROMPT_OFF, &(g_componentStatus.voicePrompt)},  // =5,//¹رՓ
 	// {vopIdx_WifiReset, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =6,//͸§¸´λ³ɹ¦
 	// {vopIdx_WifiConnecting, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =7,//͸§սԚÁ¬½Ӎ
 	// {vopIdx_WifiOk, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =8,//͸§Á¬½ӳɹ¦
@@ -277,13 +299,13 @@ void checkAndAckGetCharUpdate(void)
 	{vopIdx_CHcomplete, CINDEX_CHARGECOMPLETE, &(g_componentStatus.charge)},  // =10,//³䵧ґͪ³ɍ
 	{vopIdx_Choff, CINDEX_UNCHARGED, &(g_componentStatus.charge)},  // =11,//³䵧֐¶ύ
 	
-	{vopIdx_standard, CINDEX_STANDARD, &(g_componentStatus.mop)},  // =12,//½øȫ±ꗼģʽ
-	{vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.mop)},  // =13,//½øȫǿÁ¦ģʽ
+	{vopIdx_standard, CINDEX_STANDARD, &(g_componentStatus.status)},  // =12,//½øȫ±ꗼģʽ
+	{vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.status)},  // =13,//½øȫǿÁ¦ģʽ
 	// {vopIdx_nop2, CINDEX_STANDBY, &(g_componentStatus.mop},  // =14,//´󋮳叴ģʽ
 	// {vopIdx_RUNCL, CINDEX_STANDBY, &(g_componentStatus.mop},  // =15,//½øȫהǥϴģʽ
 	// {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.mop},  // =16,//הǥϴґͪ³ɍ
 	
-	{vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.mop)},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
+	{vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.status)},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
 
 	// {vopIdx_RUNOFF, CINDEX_STANDBY, &(g_componentStatus.mop)},  // =18,//ԋА½ኸ
 	{vopIdx_Chlowing, CINDEX_BATTERYLOW,  &(g_componentStatus.battery)},  // =19,//µ灿²»ף£¬ǫ¼°ʱ³䵧
@@ -341,6 +363,12 @@ Quadruple_u8u8u8pu8_t  voiceIdx2status[] = {
 	{vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.roller), 2},  // =31,//ǫ¼첩¹öͲ
 };
 #endif
+
+Triplet_u8u8pu8_t const voiceIdx2CommonFault[] = {
+	{vopIdx_CHErr, CINDEX_CHARGEFAULT, &(g_componentStatus.commonFaultDetection)},  // =22,//³䵧Ҭ³££¬ǫ¼첩³䵧Ʒ
+    {vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.commonFaultDetection)},  // =31,//ǫ¼첩¹öͲ
+};
+
 /*****************************************************************************/
 RetStatus setStatusByvoiceIdx(u8 idx)
 {
@@ -369,13 +397,16 @@ RetStatus reportStatusByvoiceIdx(u8 idx)
 
 /*****************************************************************************/
 static const pair_msgType2u8ptr_t msgType2u8ptr[] = {
-    {CGETCHAR_MOP,        &(g_componentStatus.mop)},
-    {CGETCHAR_ROLLER,     &(g_componentStatus.roller)},
-    {CGETCHAR_PUMP,       &(g_componentStatus.pump)},
-    {CGETCHAR_CLEARWATER, &(g_componentStatus.clearWater)},
-    {CGETCHAR_BATTERY,    &(g_componentStatus.battery)},
-    {CGETCHAR_CHARGE,     &(g_componentStatus.charge)},
-    {CGETCHAR_STATUS,     &(g_componentStatus.status)},
+    {CGETCHAR_MOP,                &(g_componentStatus.mop)},
+    {CGETCHAR_ROLLER,             &(g_componentStatus.roller)},
+    {CGETCHAR_PUMP,               &(g_componentStatus.pump)},
+    {CGETCHAR_CLEARWATERBOXSTATE, &(g_componentStatus.clearWater)},
+    {CGETCHAR_BATTERY,            &(g_componentStatus.battery)},
+    {CGETCHAR_CHARGE,             &(g_componentStatus.charge)},
+    {CGETCHAR_STATUS,             &(g_componentStatus.status)},
+    {CGETCHAR_VOICEPROMPT,        &(g_componentStatus.voicePrompt)},
+    {CGETCHAR_COMMONFAULTDETECTION,  &(g_componentStatus.commonFaultDetection)},
+    
     // {CGETCHAR_NETINFO,    &(g_componentStatus.charge)},
     // {CGETCHAR_UPDATE,     &(g_componentStatus.charge)},
 };
@@ -391,4 +422,44 @@ RetStatus AckgetCharStatusByMsgType(msgType_t msgType)
     }
     return PERROR;
 }
+
+/*****************************************************************************/
+static const Triplet_msgTypeu8pu8_t msgType2u8u8ptr[] = {
+    {CMSG_VOPON,  CINDEX_VOICEPROMPT_ON,       &(g_componentStatus.voicePrompt)},
+    {CMSG_VOPOFF, CINDEX_VOICEPROMPT_OFF,      &(g_componentStatus.voicePrompt)}, 
+};
+
+RetStatus setStatusByMsgType(msgType_t msgType)
+{
+    int i = 0;
+    for (i = 0; i < MTABSIZE(msgType2u8u8ptr); i++) {
+        if (msgType2u8u8ptr[i].msgType == msgType) {
+            *(msgType2u8u8ptr[i].ptr) = msgType2u8u8ptr[i].status_idx;
+            return POK;
+        }
+    }
+    return PERROR;
+}
+
+const pair_u8msgType_t msgType2voiceIdx[] = {
+    {vopIdx_VoiceOpen,  CMSG_VOPON},
+    {vopIdx_VoiceClose, CMSG_VOPOFF},
+};
+
+RetStatus getVoiIdxByMsgType(const msgType_t msgType, u8* voi_idx)
+{
+    for (int i = 0; i < MTABSIZE(msgType2voiceIdx); i++) {
+        if (msgType2voiceIdx[i].second == msgType) {
+            *voi_idx = msgType2voiceIdx[i].first;
+            return POK;
+        }
+    }
+    return PERROR;
+}
+
+RetStatus AckPutCharStatusByMsgType(msgType_t msgType)
+{
+    return POK;
+}
+
 /*****************************************************************************/

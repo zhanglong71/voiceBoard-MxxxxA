@@ -21,13 +21,7 @@
 #define	FALSE	0
 
 #define TIMER_NUM	4
-/** 
- * 0 - 计时计数
- * 1 - 开/闭锁
- * 2 - VOP语音
- * 3 - led blink
- * 4 - ADC采集周期
- */
+
 #define TIMER_0 	0		/** 100Hz定时, 0等于关闭时钟 **/
 #define TIMER_UNIT 	(1)		/** 100Hz定时, 0等于关闭时钟 **/
 #define TIMER_2UNIT 	(2)		/** 100Hz定时, 0等于关闭时钟 **/
@@ -44,10 +38,10 @@
 #define TIMER_6SEC  (TIMER_1SEC * 6)
 
 /*******************************************************************************/
-#define CCR4_Val (40961)
-#define CCR3_Val (27309)
-//#define CCR2_Val (350)  // 17.11KHz
-#define CCR2_Val (700)  // 8.55KHz
+// #define CCR4_Val (40961)
+// #define CCR3_Val (27309)
+// #define CCR2_Val (350)  // 17.11KHz
+// #define CCR2_Val (700)  // 8.55KHz
 #define CCR1_Val (1500)    // 4.16KHz
 //#define CCR1_Val (375)    // 16.18KHz
 //#define CCR1_Val (350)  //17.11KHz
@@ -65,7 +59,7 @@
 /*******************************************************************************/
 
 /*******************************************************************************/
-/**  index for sendto wifi ֻҪ²»Ϡͬ¼´¿ɠ**/
+/**  state index for sendto wifi ֻҪ²»Ϡͬ¼´¿ɠ**/
 #define CINDEX_UNKNOW                 (0)
 
 #define CINDEX_STANDBY                (1)
@@ -92,11 +86,12 @@
 #define CINDEX_CHARGING               (17)
 #define CINDEX_CHARGECOMPLETE         (18)
 #define CINDEX_CHARGEFAULT            (19)
+#define CINDEX_CHARGEREPAIR           (20)
 
-#define CINDEX_CONNECTED              (20)
-#define CINDEX_DISCONNECTED           (21)
-#define CINDEX_NETINFO                (22)
-#define CINDEX_UPDATE                (23)
+#define CINDEX_CONNECTED              (25)
+#define CINDEX_DISCONNECTED           (26)
+#define CINDEX_NETINFO                (27)
+#define CINDEX_UPDATE                 (28)
 
 #define CINDEX_TANKINPLACE            (31)
 #define CINDEX_TANKNOTINPLACE         (32)
@@ -107,6 +102,11 @@
 #define CINDEX_FLUSHING               (37) 
 #define CINDEX_FULLSEWAGE             (38)
 #define CINDEX_SETUP                  (39)
+
+#define CINDEX_VOICEPROMPT_ON         (40)
+#define CINDEX_VOICEPROMPT_OFF        (41)
+
+// #define CINDEX_COMMONFAULTDETECTION   (42)
 
 #define CINDEX_INVALID (0xff)
 
@@ -156,24 +156,40 @@
 #define CKEYINDEX_PUTSYNC                (14)
 #define CKEYINDEX_GETDEVINFO             (15)
 
-/*******************************************************************************/
-#define CBODYINDEX_NONE              (0)
-#define CBODYINDEX_FAIL              (1)
-#define CBODYINDEX_ERROR             (2)
-#define CBODYINDEX_MOP               (3)
-#define CBODYINDEX_ROLLER            (4)
-#define CBODYINDEX_CLEARWATER        (5)
-#define CBODYINDEX_PUMP              (6)
-#define CBODYINDEX_BATTERYSTATUS     (7)
-#define CBODYINDEX_CHARGE            (8)
-#define CBODYINDEX_NETINFO           (9)
-#define CBODYINDEX_UPDATE            (10)
-#define CBODYINDEX_STATUS            (11)
+/*** L1 key ***/
+#define CL1KEYINDEX_VOICEPROMPT          (16)
 
-#define CBODYINDEX_0                 (12)
-#define CBODYINDEX_1                 (13)
-#define CBODYINDEX_8                 (14)
-#define CBODYINDEX_OK                (15)
+
+/*** L0 key ***/
+#define CL0KEYINDEX_SWITCH               (17)
+
+/*** L0 value ***/
+#define CL0VALUEINDEX_0             (18)
+#define CL0VALUEINDEX_1             (19)
+
+/*******************************************************************************/
+#define CBODYINDEX_NONE                   (0)
+#define CBODYINDEX_FAIL                   (1)
+#define CBODYINDEX_ERROR                  (2)
+#define CBODYINDEX_MOP                    (3)
+#define CBODYINDEX_ROLLER                 (4)
+#define CBODYINDEX_CLEARWATER             (5)
+#define CBODYINDEX_CLEARWATERBOXSTATE     (5)
+#define CBODYINDEX_PUMP                   (6)
+#define CBODYINDEX_BATTERYSTATUS          (7)
+#define CBODYINDEX_BATTERY                (7)
+#define CBODYINDEX_CHARGE                 (8)
+#define CBODYINDEX_NETINFO                (9)
+#define CBODYINDEX_UPDATE                 (10)
+#define CBODYINDEX_STATUS                 (11)
+#define CBODYINDEX_VOICEPROMPT            (12)
+#define CBODYINDEX_COMMONFAULTDETECTION   (13)
+#define CBODYINDEX_COMMONFAULT            (13)
+
+#define CBODYINDEX_0                      (20)
+#define CBODYINDEX_1                      (21)
+#define CBODYINDEX_8                      (22)
+#define CBODYINDEX_OK                     (23)
 
 /*******************************************************************************/
 #endif

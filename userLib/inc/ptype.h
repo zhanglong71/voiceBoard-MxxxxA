@@ -77,12 +77,17 @@ typedef enum {
     CGETCHAR_STATUS,
     CGETCHAR_MOP,
     CGETCHAR_ROLLER,
-    CGETCHAR_CLEARWATER,
+    CGETCHAR_CLEARWATERBOXSTATE,
     CGETCHAR_PUMP,
     CGETCHAR_BATTERY,
     CGETCHAR_CHARGE,
+    CGETCHAR_COMMONFAULTDETECTION,
+    // CGETCHAR_COMMONFAULT,
     CGETCHAR_NETINFO,
     CGETCHAR_UPDATE,
+    CGETCHAR_VOICEPROMPT,
+    
+    CPUTCHAR_VOICEPROMPT,
     CPUT_CHAR,
     CPUT_SYNC,
     CHEART_BEAT,
@@ -103,9 +108,10 @@ typedef enum {
     CRESETNET_RSPOK,
     CRESETNET_RSPFAIL,
     
-	CPMT_TOUT,		/** 提示动作超时 **/
-	CPMT_OVER,		/** 提示动作完成 **/
-
+	CPMT_TOUT,
+	CPMT_OVER,
+	CMSG_VOPON,		    /** voice prompt on **/
+	CMSG_VOPOFF,		/** voice prompt off **/
 } msgType_t;
 
 typedef struct msg_s {
@@ -162,6 +168,8 @@ typedef enum {
     obj_IP,
     obj_MAC,
     obj_RSSI,
+    obj_VOICEPROMPT,
+    obj_PUTCHAR,
 } objType_t;
 /*******************************************************************************/ 
 
@@ -190,20 +198,17 @@ typedef struct {
 } triplet_u8u8pu8_t;
 #endif
 
-#if 0
-typedef struct {
-   u8  idx;
-   u8  status_idx;
-   u8* ptr;
-   u8  value;
-} Quadruple_u8u8u8pu8_t;
-#else
 typedef struct {
    u8  idx;
    u8  status_idx;
    u8* ptr;
 } Triplet_u8u8pu8_t;
-#endif
+
+typedef struct {
+   msgType_t msgType;
+   u8  status_idx;
+   u8* ptr;
+} Triplet_msgTypeu8pu8_t;
 
 typedef struct {
    u8 first;
@@ -219,6 +224,13 @@ typedef struct {
    msgType_t first;
    u8* second;
 } pair_msgType2u8ptr_t;
+
+typedef struct {
+    u8 L0Key_idx;
+    u8 L0Value_idx;
+    u8 L1Key_idx;
+    msgType_t msg;
+} Quadruple_u8u8u8Msg_t;
 /*******************************************************************************/ 
 typedef struct u8Data_s{
 	u8 u8Val;
@@ -368,13 +380,22 @@ typedef enum {
 
 /*******************************************************************************/
 typedef struct ComponentField_s{
-    u8 mop;
-	u8 roller;
-	u8 pump;
-	u8 battery;
-	u8 charge;
-	u8 clearWater;
-    u8 status;
+    u8 mop;          // the mechine work state
+	u8 roller;       // roller fault state
+	u8 pump;         // pump fault state
+	u8 battery;      // Low voltage or not 
+	u8 charge;       // charge state
+	u8 clearWater;   // tank state
+    u8 status;       // the mechine on/off line      
+    u8 voicePrompt;  // voice prompt on/off
+    u8 commonFaultDetection;  // the last state of  roller/pump/charging!
+    /**
+     * the mechine state! 
+     * 
+     * all the state can be updated by uart1(485 VOP play data)
+     * voicePrompt can be updated by uart2(APP with cloud)
+     * 
+     **/
 } ComponentField_t;
 
 typedef struct NetInfo_s{

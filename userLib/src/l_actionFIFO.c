@@ -90,7 +90,7 @@ int actionQueueOut(actionQueue_t *q, action_t *action)
 }
 
 /*********************************************************************************/
-void vp_stor(unsigned char __vpIdx)
+void vp_stor(u8 __vpIdx)
 {
 	action_t action;
 /** step 1 preparation **/

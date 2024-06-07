@@ -50,4 +50,7 @@ RetStatus reportgetIp(void);
 RetStatus reportgetMac(void);
 RetStatus reportgetRssi(void);
 
+unsigned char JsonParseL0(char* jsonstrbuf, kv_t* jsonstcarr);
+RetStatus JsonParseL1(char* jsonstrbuf, kv_t* jsonstcarr);
+
 #endif
