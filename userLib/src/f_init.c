@@ -46,6 +46,7 @@ int f_init(void *pMsg)
         SysTick_Config(SystemCoreClock / 100);  /** 10ms **/
         GPIO_initVOPPort();
         GPIO_init4led();
+        GPIO_wifiEnable();
         /*** step2 vaitual about Periph_Driver ***************************************************/
         vp_init();
         promptInit();

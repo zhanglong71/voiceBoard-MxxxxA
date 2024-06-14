@@ -12,7 +12,7 @@
 void RCC_Configuration4uart(void)
 {
   /* Enable GPIO clock */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD, ENABLE);
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB |  RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD, ENABLE);
 
   /* Enable UART1 clock */
   RCC_APBPeriph2ClockCmd(RCC_APBPeriph2_USART1, ENABLE);
@@ -163,21 +163,36 @@ void NVIC_Configuration4uart(void)
 
 void GPIO_init485(void)
 {
-    #if 1
   GPIO_InitTypeDef GPIO_InitStructure;
-  /* GPIOD Periph clock enable */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+  /* GPIOB Periph clock enable */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE); //  enable in RCC_Configuration4uart();
 
-  /* Configure PD02() in output pushpull mode */
+  /* Configure PB04() in output pushpull mode */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;  // GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   M485TR_R("initialized as input state");
-    #endif
+}
+
+void GPIO_wifiEnable(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  /* GPIOD Periph clock enable */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE); //  enable in RCC_Configuration4uart();
+
+  /* Configure PB04() in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;  // GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+  MWifi_Enable("Enable wifi module");
 }
 
 #if 0

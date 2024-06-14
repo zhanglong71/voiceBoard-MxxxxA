@@ -23,6 +23,8 @@
 #define M485TR_T(x) do{GPIO_SetBits(GPIOB, GPIO_Pin_4);}while(0)
 #define M485TR_R(x) do{GPIO_ResetBits(GPIOB, GPIO_Pin_4);}while(0)
 /*********************************************************************************/
+#define MWifi_Enable(x) do{GPIO_SetBits(GPIOD, GPIO_Pin_1);}while(0)
+/*********************************************************************************/
 #define Mset_bit(var, offset) do{	\
         ((var) |= (1 << (offset))); \
     }while(0)

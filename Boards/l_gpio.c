@@ -23,6 +23,7 @@ void GPIO_initVOPPort(void)
     GPIO_Init(GPIOD, &GPIO_InitStructure);
       
     /* Configure PD03(5V_EN) in output pushpull mode */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_Init(GPIOD, &GPIO_InitStructure);

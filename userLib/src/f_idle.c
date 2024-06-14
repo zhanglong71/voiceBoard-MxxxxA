@@ -7,6 +7,7 @@
 #include "l_gpio.h"
 #include "l_u8FIFO.h"
 #include "l_rs485.h"
+#include "l_jsonTL.h"
 #include "f_init.h"
 #include "f_idle.h"
 
@@ -25,6 +26,14 @@ int f_idle(void *pMsg)
     {
     case CMSG_TMR:
         g_tick++;
+
+        if ((g_tick % 10) == 1) {
+            if ((g_componentStatus.status != CINDEX_STANDBY) && (g_componentStatus.charge == CINDEX_CHARGING)) {
+                /** work & charging, then exit **/
+                g_componentStatus.status = CINDEX_STANDBY;
+            }
+            reportComponentStatus(g_componentStatus.status);
+        }
         break;
         
     case CMSG_INIT:
@@ -36,7 +45,7 @@ int f_idle(void *pMsg)
             SetTimer_irq(&g_timer[0], TIMER_1SEC, CMSG_TMR);
         }
         break;
-        
+
     case CMSG_TEST:
     case CMSG_2TEST:
         // test only ????????????????????

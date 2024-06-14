@@ -9,5 +9,6 @@ void USART_Config(void);
 void GPIO_init485(void);
 // void deamon_485uart1_send(void);
 void deamon_uart2_send(void);
+void GPIO_wifiEnable(void);
 
 #endif

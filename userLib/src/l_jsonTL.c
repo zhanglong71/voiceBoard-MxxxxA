@@ -91,31 +91,29 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     { CINDEX_PUMPNORMAL,          "{\"commonFaultDetection\":{\"code\":107}}"},               // pumpNormal
     { CINDEX_PUMPOVERLOAD,        "{\"commonFaultDetection\":{\"code\":106}}"},               // pumpOverload
     
-    { CINDEX_ROLLERNORMAL,        "{\"commonFaultDetection\":{\"code\":105}}"},               // normal roller
-    { CINDEX_ROLLEROVERLOAD,      "{\"commonFaultDetection\":{\"code\":104}}"},               // error roller
+    { CINDEX_ROLLERNORMAL,        "{\"commonFaultDetection\":{\"code\":105}}"},               // roller error recover to normal
+    { CINDEX_ROLLEROVERLOAD,      "{\"commonFaultDetection\":{\"code\":104}}"},               // roller error
     
-    { CINDEX_PUMPNORMAL      ,    "{\"commonFaultDetection\":{\"code\":103}}"},               // same as 107
-    { CINDEX_PUMPCURRENTSMALL,    "{\"commonFaultDetection\":{\"code\":102}}"},
+    { CINDEX_PUMPNORMAL      ,    "{\"commonFaultDetection\":{\"code\":103}}"},               // pump current is too small recover to normal
+    { CINDEX_PUMPCURRENTSMALL,    "{\"commonFaultDetection\":{\"code\":102}}"},               // pump current is too small
     
-    { CINDEX_CHARGEREPAIR,        "{\"commonFaultDetection\":{\"code\":101}}"},               // charging fault repaired
+    { CINDEX_CHARGEREPAIR,        "{\"commonFaultDetection\":{\"code\":101}}"},               // charging fault recover to normal
     { CINDEX_CHARGEFAULT,         "{\"commonFaultDetection\":{\"code\":100}}"},               // charging fault
  /****/   
-    { CINDEX_CLEARWATERNORMAL,    "{\"clearWaterBoxState\":{\"status\":0}}"},  // clear water normal ÀÆœ‰’˝≥£
-    { CINDEX_CLEARWATERSHORTAGE,  "{\"clearWaterBoxState\":{\"status\":1}}"},  // clear water shortage ÀÆœ‰»±ÀÆ
+    { CINDEX_CLEARWATERNORMAL,    "{\"clearWaterBoxState\":{\"status\":0}}"},  // clear water normal
+    { CINDEX_CLEARWATERSHORTAGE,  "{\"clearWaterBoxState\":{\"status\":1}}"},  // clear water shortage
     
-    { CINDEX_UNCHARGED,           "{\"battery\":{\"charging\":0}}"},           // Œ¥≥‰µÁ
-    { CINDEX_CHARGING,            "{\"battery\":{\"charging\":1}}"},           // ≥‰µÁ÷–
-    { CINDEX_CHARGECOMPLETE,      "{\"battery\":{\"charging\":100}}"},         // ≥‰¬˙
+    { CINDEX_UNCHARGED,           "{\"battery\":{\"charging\":0}}"},           // Not Charging
+    { CINDEX_CHARGING,            "{\"battery\":{\"charging\":1}}"},           // Charging
+    { CINDEX_CHARGECOMPLETE,      "{\"battery\":{\"charging\":100}}"},         // Charge Complete
     
-    { CINDEX_BATTERYNORMAL,       "{\"battery\":{\"alarm\":0}}"},              // µÁ—πµÕ
-    { CINDEX_BATTERYLOW,          "{\"battery\":{\"alarm\":1}}"},              // µÁ—π’˝≥£
+    { CINDEX_BATTERYNORMAL,       "{\"battery\":{\"alarm\":0}}"},              // Normal battery level
+    { CINDEX_BATTERYLOW,          "{\"battery\":{\"alarm\":1}}"},              // Low voltage(Low battery)
     
     { CINDEX_BATTERYLEVEL,        "{\"battery\":{\"level\":%u}}"},
     
-    { CINDEX_VOICEPROMPT_ON,      "{\"Voicepormpt\":{\"switch\":1}}"},         // voice prompt on
-    { CINDEX_VOICEPROMPT_OFF,     "{\"Voicepormpt\":{\"switch\":0}}"},         // voice prompt off
-
-   //  { CINDEX_COMMONFAULTDETECTION,"{\"commonFaultDetection\":{\"code\":0}}"},  // commonFault
+    { CINDEX_VOICEPROMPT_ON,      "{\"voicePormpt\":{\"switch\":1}}"},         // voice prompt on
+    { CINDEX_VOICEPROMPT_OFF,     "{\"voicePormpt\":{\"switch\":0}}"},         // voice prompt off
 
     { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // ÁΩëÁªú‰ø°ÊÅØ
     { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // ÂçáÁ∫ß‰ø°ÊÅØ
@@ -206,18 +204,18 @@ RetStatus reportgetCharNetInfo(NetInfo_t* netInfo)
     // sprintf(buf, "IP:%s, RSSI: %s, SSID: %s", g_netInfo.ip, g_netInfo.rssi, g_netInfo.ssid);
     // sprintf(buf, "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}", g_netInfo.ip, g_netInfo.rssi, g_netInfo.ssid);
     
-    // sprintf(buf, "{\"netInfo\":{\"RSSI\":%s}}", g_netInfo.rssi);      // ø…“‘…˙–ß
-    // sprintf(buf, "{\"netInfo\":{\"SSID\":%s}}", g_netInfo.ssid);      // ø…“‘…˙–ß
-    // sprintf(buf, "{\"netInfo\":{\"IP\":%s}}", g_netInfo.ip);             // Œﬁ–ß
+    // sprintf(buf, "{\"netInfo\":{\"RSSI\":%s}}", g_netInfo.rssi);      // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    // sprintf(buf, "{\"netInfo\":{\"SSID\":%s}}", g_netInfo.ssid);      // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    // sprintf(buf, "{\"netInfo\":{\"IP\":%s}}", g_netInfo.ip);             // ÔøΩÔøΩ–ß
     // sprintf(buf, "{\"netInfo\":{\"MAC\":%s}}", g_netInfo.mac);
 
-    //strncpy(buf, "IP: 10.23.45.67", MTABSIZE(buf));  // ø…“‘…˙–ß
-    //strncpy(buf, g_netInfo.ip, MTABSIZE(buf));       // ø…“‘…˙–ß
-    //strcpy(buf, g_netInfo.ip);                       // ø…“‘…˙–ß
-    //strcpy(buf, g_netInfo.mac);                        // ø…“‘…˙–ß
+    //strncpy(buf, "IP: 10.23.45.67", MTABSIZE(buf));  // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    //strncpy(buf, g_netInfo.ip, MTABSIZE(buf));       // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    //strcpy(buf, g_netInfo.ip);                       // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    //strcpy(buf, g_netInfo.mac);                        // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
     
-    // sprintf(buf, "IP: %s", "10.23.45.67");       // ø…“‘…˙–ß
-    // sprintf(buf, "%s", g_netInfo.ip);            // Œﬁ–ß
+    // sprintf(buf, "IP: %s", "10.23.45.67");       // ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ–ß
+    // sprintf(buf, "%s", g_netInfo.ip);            // ÔøΩÔøΩ–ß
     u8Data_t u8Data;
     for (int i = 0; i < strlen(buf); i++) {
         u8Data.u8Val = buf[i];
@@ -442,18 +440,18 @@ jsonTL_t* getService(u8 idx)
                 "]"
                 #else
                 "\"sId\":["
-                    "\"cleanwaterboxstate\","
+                    "\"cleanWaterBoxState\","
                     "\"battery\","
                     "\"status\","
                     "\"commonFaultDetection\","
-                    "\"Voiceprompt\""
+                    "\"voicePrompt\""
                     "],"
                 "\"sType\":["
                     "\"status\","
                     "\"battery\","
                     "\"status\","
                     "\"fault\","
-                    "\"Voiceprompt\""
+                    "\"voicePrompt\""
                 "]"
                 #endif
             #endif
@@ -489,7 +487,7 @@ jsonTL_t* getConnectWifi(u8 idx)
 #endif
 
 /**
- * ”√sprintf()◊™ªª ˝◊÷µΩ◊÷∑˚¥Æ ±≥ˆœ÷π ’œ! ‘≠“ÚŒ¥÷™! ”√¥À∫Ø ˝ÃÊ¥˙
+ * ÔøΩÔøΩsprintf()◊™ÔøΩÔøΩÔøΩÔøΩÔøΩ÷µÔøΩÔøΩ÷∑ÔøΩÔøΩÔøΩ ±ÔøΩÔøΩÔøΩ÷πÔøΩÔøΩÔøΩ! ‘≠ÔøΩÔøΩŒ¥÷™! ÔøΩ√¥À∫ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ
  **/
 RetStatus digit2ascii(int from, char* to)
 {
@@ -548,7 +546,7 @@ RetStatus strim(char* str)
  * ==> strip(abc, '{', '}') ==>
  * bbbbbb
  *
- * str◊÷∑˚¥Æ÷–£¨÷ª±£¡Ù¥”◊Ó◊ÛhchµΩ◊Ó”“µƒtch÷Æº‰µƒ
+ * strÔøΩ÷∑ÔøΩÔøΩÔøΩÔøΩ–£ÔøΩ÷ªÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩhchÔøΩÔøΩÔøΩÔøΩÔøΩ“µÔøΩtch÷ÆÔøΩÔøΩÔøΩ
  **/
 char strip(char* str, char hch, char tch) 
 {
@@ -764,9 +762,10 @@ const pair_u8s8p_t commandBodyArr[] = {
     {CBODYINDEX_CLEARWATERBOXSTATE,     "clearWaterBoxState"},
  // {CBODYINDEX_PUMP,                   "pump"},
     {CBODYINDEX_BATTERY,                "battery"},
-    {CBODYINDEX_CHARGE,                 "charge"},
+//  {CBODYINDEX_CHARGE,                 "charge"},
     {CBODYINDEX_STATUS,                 "status"},
     {CBODYINDEX_VOICEPROMPT,            "voicePrompt"},
+//  {CBODYINDEX_VOICEPROMPT,            "voiceprompt"},
     {CBODYINDEX_COMMONFAULTDETECTION,   "commonFaultDetection"},
     
     {CBODYINDEX_NETINFO,        "netInfo"},
@@ -793,7 +792,7 @@ RetStatus getStringIndexbyString(const pair_u8s8p_t* keyArr, u8 keyArr_len, char
 }
 
 /**
- * ºÏµΩ÷∏∂®µƒkey/len/body, ∂‘”¶µΩ÷∏∂®µƒœ˚œ¢; √ª”–∂‘”¶µΩœ˚œ¢µƒ(CMSG_NONE), –Ë“™Ω¯“ª≤Ω ∂±¥¶¿Ì
+ * ÔøΩÏµΩ÷∏ÔøΩÔøΩÔøΩÔøΩkey/len/body, ÔøΩÔøΩ”¶ÔøΩÔøΩ÷∏ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩœ¢; √ªÔøΩ–∂ÔøΩ”¶ÔøΩÔøΩÔøΩÔøΩœ¢ÔøΩÔøΩ(CMSG_NONE), ÔøΩÔøΩ“™ÔøΩÔøΩ“ªÔøΩÔøΩ ∂ÔøΩÔøΩÔøΩÔøΩ
  **/
 const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
     {CKEYINDEX_GETCHAR,       3,  CBODYINDEX_MOP,                   CGETCHAR_MOP},              // protocal changed, give up
@@ -941,7 +940,7 @@ objType_t sm_receiveData(char *data)
             #if 1
             digit2ascii(s_bodyLen, data);  // ignore
             #else
-            sprintf(data, "%d", s_bodyLen);  // Œ¥÷™‘≠“Úµƒ ˝æ› ß∞‹! ∆˙”√ !!!!!!
+            sprintf(data, "%d", s_bodyLen);  // Œ¥÷™‘≠ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ßÔøΩÔøΩ! ÔøΩÔøΩÔøΩÔøΩ !!!!!!
             #endif
             s_smStatus = sm_receiveBody;
             /** !!! **/
@@ -978,7 +977,7 @@ objType_t sm_receiveData(char *data)
                     u8Data.u8Val = data[i];
                     u8FIFOin_irq(&g_uart2TxQue, &u8Data);
                 }
-                #endif // ???????????????????????Â
+                #endif // ???????????????????????ÔøΩ
                 return objType;
             }
             /** step 2: identify the body **/

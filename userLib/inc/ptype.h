@@ -380,13 +380,13 @@ typedef enum {
 
 /*******************************************************************************/
 typedef struct ComponentField_s{
-    u8 mop;          // the mechine work state
+    u8 mop;          // // !!!!!!!!!! giveup the status!!!!!!!!!!!!!
 	u8 roller;       // roller fault state
 	u8 pump;         // pump fault state
 	u8 battery;      // Low voltage or not 
 	u8 charge;       // charge state
 	u8 clearWater;   // tank state
-    u8 status;       // the mechine on/off line      
+    u8 status;       // the mechine work state      
     u8 voicePrompt;  // voice prompt on/off
     u8 commonFaultDetection;  // the last state of  roller/pump/charging!
     /**
