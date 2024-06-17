@@ -96,6 +96,7 @@ void SysTick_Handler(void)
 {
     TimingDelay_Decrement();
     TimingDelay_Increment();
+    key_scan();
 }
 
 /**

@@ -39,6 +39,43 @@ void TimingDelay_Increment(void)
     }
 }
 
+/**
+ * pressed key, then k11=H; released key, then k11=L
+ **/
+void key_scan(void)
+{
+	msg_t msg;
+    static u8 tmr_key = 0;
+    static u8 key_last = 0xff;
+
+    if (MGet_k11("scan k11") == Bit_SET) {
+        if (!Mget_bit(key_last, 1)) {
+            tmr_key++;
+            if (tmr_key >= 2) { // 去抖动时间
+                msg.msgType = CMSG_DKEY;
+                msgq_in(&g_msgq, &msg);
+                
+                tmr_key = 0;
+                Mset_bit(key_last, 1);
+            }
+        } else {
+            tmr_key = 0;
+        }
+    } else { /**KEY1 == Bit_RESET **/
+        if (Mget_bit(key_last, 1)) {
+            tmr_key++;
+            if (tmr_key >= 2) { // 去抖动时间
+                msg.msgType = CMSG_UKEY;
+                msgq_in(&g_msgq, &msg);
+                // MGPIO_Blink();  // ????????????????????
+                tmr_key = 0;
+                Mreset_bit(key_last, 1);
+            }
+        } else {
+            tmr_key = 0;
+        }
+    }
+}
 
 /**
   * @brief  Configure the TIM IRQ Handler.

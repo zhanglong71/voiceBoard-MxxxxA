@@ -51,6 +51,10 @@
  func_t func;
  u16 g_tick;
  u16 g_flag;
+ /**
+  * g_flag.1 for key double click
+  * 
+  **/
  Timer_t g_timer[TIMER_NUM];
  /**
   * g_timer[0] for global, 
@@ -63,7 +67,6 @@ u8FIFO_t g_uart1RxQue;
 u8FIFO_t g_uart2TxQue;
 u8FIFO_t g_uart2RxQue;
 
-// rs485transX_t rs485transX;
 rs485transX_t g_rs485transX;
 
 actionQueue_t g_promptQueue;
@@ -125,6 +128,7 @@ int main(void)
     /* Infinite Loop */
     while(1)
     {
+        IWDG_ReloadCounter();  /* Reload IWDG counter */
         deamon_task();
         if(msgq_out_irq(&g_msgq, &msg) == FALSE) {
             continue;

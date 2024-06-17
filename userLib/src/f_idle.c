@@ -39,12 +39,31 @@ int f_idle(void *pMsg)
     case CMSG_INIT:
         retStatus = reportVersion();
         if (retStatus != POK) {  // busy! try again later; giveup the 
-            SetTimer_irq(&g_timer[0], TIMER_100MS, CSYS_INIT);
+            SetTimer_irq(&g_timer[0], TIMER_100MS, CMSG_INIT);
         } else {
             g_tick = 0;
             SetTimer_irq(&g_timer[0], TIMER_1SEC, CMSG_TMR);
         }
         break;
+
+     /** check double click block start **/
+     case CMSG_DKEY:
+        if (Mget_bit(g_flag, 1)) {   /** (g_flag & (1 << 1)) double click...  ok **/
+            Mreset_bit(g_flag, 1);
+            ClrTimer_irq(&g_timer[3]);
+   
+            reportResetNet(); // !!!!!!!!!! 
+        } else  { /**  **/
+            Mset_bit(g_flag,1);
+            SetTimer_irq(&g_timer[3], TIMER_400MS, CMSG_DCLK);
+        }
+        break;
+    
+    case CMSG_DCLK:
+        Mreset_bit(g_flag, 1);
+        ClrTimer_irq(&g_timer[3]);
+        break;
+    /** check double click block end **/
 
     case CMSG_TEST:
     case CMSG_2TEST:

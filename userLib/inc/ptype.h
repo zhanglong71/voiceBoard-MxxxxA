@@ -46,13 +46,14 @@ typedef enum {
  * 1. 普通以CMSG_xxx形式命名
  * 2. 以CSYS_xxx的形式命令在sys中处理的消息
  *************/    
-    CSYS_INIT,  	//
+    // CSYS_INIT,  	//
     CMSG_INIT,  	//初始化动作(进入选择)
  
     CMSG_TMR,
 
     CMSG_DKEY,
     CMSG_UKEY,
+    CMSG_DCLK,
     
     // CUART1_TOUT,
     CMSG_UART1RTOUT,
@@ -240,8 +241,7 @@ typedef struct u8FIFO_s {
     u8 in;
     u8 out;
     u8 out2;
-    //u8 len;
-	  //u8 __pad1;
+	//u8 __pad1;
     u8 buf[U8FIFOSIZE];     /** 16 bytes **/
 } u8FIFO_t;
 

@@ -7,5 +7,6 @@ void TIM_Config(void);
 void vop_sendByPulse(void);
 void vp_init(void);
 void vp_play(u8 __vpIdx);
+void key_scan(void);
 
 #endif

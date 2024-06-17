@@ -45,9 +45,11 @@ int f_init(void *pMsg)
         TIM_Config();
         SysTick_Config(SystemCoreClock / 100);  /** 10ms **/
         GPIO_initVOPPort();
+        GPIO_keyScanInit();
         GPIO_init4led();
         GPIO_wifiEnable();
-        /*** step2 vaitual about Periph_Driver ***************************************************/
+        watchDog_init();
+        /*** step2 varitual about Periph_Driver ***************************************************/
         vp_init();
         promptInit();
         rs485Init();
@@ -69,7 +71,7 @@ int f_init(void *pMsg)
         fstack_push(&g_fstack, &func);
         
         msgq_init(&g_msgq);
-        msg.msgType = CSYS_INIT;
+        msg.msgType = CMSG_INIT;
         msgq_in_irq(&g_msgq, &msg);
         break;
 

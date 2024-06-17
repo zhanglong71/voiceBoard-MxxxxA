@@ -1142,7 +1142,7 @@ unsigned char JsonParseL0(char* jsonstrbuf, kv_t* jsonstcarr)
 
 
 const pair_u8s8p_t L1KeyArr[] = {
-    {CL1KEYINDEX_VOICEPROMPT,    "voiceprompt"},
+    {CL1KEYINDEX_VOICEPROMPT,    "voicePrompt"},
 };
 
 const pair_u8s8p_t L0KeyArr[] = {

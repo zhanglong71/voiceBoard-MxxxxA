@@ -133,7 +133,7 @@ int sysProcess(void *pMsg)
                         u8Seq_last = u8Seq;
                         vp_stop1();
                         if ((g_componentStatus.voicePrompt == CINDEX_VOICEPROMPT_OFF) && 
-                            (!((voi == vopIdx_VoiceOpen) ||  (voi == vopIdx_VoiceClose)))) {
+                            (!((voi == vopIdx_VoiceOpen) || (voi == vopIdx_VoiceClose)))) {
                             /** shutdown voice, do nothing **/
                         } else {
                             vp_stor(voi);
