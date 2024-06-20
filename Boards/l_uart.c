@@ -47,10 +47,8 @@ void GPIO_Configuration4uart(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;  /* RX Pull-Up can filter noise*/
-  // GPIO_Init(GPIOA, &GPIO_InitStructure);
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 
   /* UART2 Pins configuration ************************************************/

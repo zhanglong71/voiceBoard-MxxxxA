@@ -8,6 +8,7 @@
 #include "l_u8FIFO.h"
 #include "l_rs485.h"
 #include "l_jsonTL.h"
+#include "l_flash.h"
 #include "f_init.h"
 #include "f_idle.h"
 
@@ -19,7 +20,8 @@
 int f_idle(void *pMsg)
 {
 //    int len;
-//    u8Data_t u8Data;
+    u8Data_t u8Data;
+    // char *ptr;
     
     RetStatus retStatus = POK;
     switch(((msg_t *)pMsg)->msgType) 
@@ -34,6 +36,29 @@ int f_idle(void *pMsg)
             }
             reportComponentStatus(g_componentStatus.status);
         }
+        // ?????????????????????????
+        #if 1
+        if  ((g_tick % 10) == 2) {
+            memset(g_buf, 0, 128);
+            flashPage_get(g_buf);
+
+            for (int i = 0; i < 32; i++) {
+                u8Data.u8Val = g_buf[i];
+                u8FIFOin_irq(&g_uart1TxQue, &u8Data);
+            }
+            
+            for (int i = 0; i < 8; i++) {
+                u8Data.u8Val = g_buf[120 + i];
+                u8FIFOin_irq(&g_uart1TxQue, &u8Data);
+            }
+            g_buf[0]++;
+            g_buf[1]++;
+            g_buf[120]++;
+            g_buf[127]++;
+            userData_update(g_buf);
+        }
+        #endif
+        // ?????????????????????????
         break;
         
     case CMSG_INIT:

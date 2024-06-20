@@ -16,7 +16,9 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 /*******************************************************************************/
 typedef enum {
-    PNOSYS = -3,   // function not implement
+    PNOSYS = -5,   // function not implement
+    PWRITE = -4,   // write error
+    PERASE = -3,   // erase error
     PINVAL = -2,   // invalid argument
     PERROR = -1,   // unclassified error
     POK = 0,
