@@ -14,14 +14,14 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>HK32F0301MG6P7A</Device>
+          <Device>HK32F0301MF6N7A</Device>
           <Vendor>HK_MicroChip</Vendor>
           <PackID>HKMicroChip.HK32F030xMxx_DFP.1.0.17</PackID>
           <PackURL>http://www.hsxp-hk.com/companyfile/2/</PackURL>
           <Cpu>IRAM(0x20000000,0x1000) IROM(0x08000000,0x8000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HK32F030xMxxA_32 -FS08000000 -FL08000 -FP0($$Device:HK32F0301MG6P7A$Flash\HK32F030xMxxA_32.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HK32F030xMxxA_32 -FS08000000 -FL08000 -FP0($$Device:HK32F0301MF6N7A$Flash\HK32F030xMxxA_32.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:HK32F0301MG6P7A$SVD\HK32F030xMxxA.svd</SFDFile>
+          <SFDFile>$$Device:HK32F0301MF6N7A$SVD\HK32F030xMxxA.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -134,7 +134,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
@@ -567,6 +567,11 @@
               <FileName>l_actionFIFO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\userLib\src\l_actionFIFO.c</FilePath>
+            </File>
+            <File>
+              <FileName>l_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\userLib\src\l_flash.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -22,7 +22,7 @@ void GPIO_initVOPPort(void)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
       
-    /* Configure PD03(5V_EN) in output pushpull mode */
+    /* Configure PD03(busy) in input mode for busy status */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
@@ -31,7 +31,7 @@ void GPIO_initVOPPort(void)
     // GPIO_SetBits(GPIOD, GPIO_Pin_2);
     MVopData_H("init status: H");
     // GPIO_ResetBits(GPIOD, GPIO_Pin_3);
-    MVopPower_off("init power status: power off");
+    MVop_busy("get voice IC busy status");
 }
 
 void watchDog_init(void)
@@ -53,29 +53,6 @@ void watchDog_init(void)
                             = LsiFreq/128
      */
     IWDG_SetReload(128000 / 128);
-    
-    /* Reload IWDG counter */
-    IWDG_ReloadCounter();
-    
-    /* Enable IWDG (the LSI oscillator will be enabled by hardware) */
-    IWDG_Enable();
-#else
-    /* IWDG timeout equal to 250 ms (the timeout may varies due to LSI frequency
-       dispersion) */
-    /* Enable write access to IWDG_PR and IWDG_RLR registers */
-    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-    
-    /* IWDG counter clock: LSI/32 */
-    IWDG_SetPrescaler(IWDG_Prescaler_8);
-    
-    /* Set counter reload value to obtain 250ms IWDG TimeOut.
-       Counter Reload Value = 250ms/IWDG counter clock period
-                            = 250ms / (LSI/8)
-                            = 0.25s / (LsiFreq/8)
-                            = LsiFreq/(8 * 4)
-                            = LsiFreq/32
-     */
-    IWDG_SetReload(/*LsiFreq = */ 60000 / 32);
     
     /* Reload IWDG counter */
     IWDG_ReloadCounter();
@@ -110,10 +87,11 @@ void GPIO_init4led(void)
   
     /* Configure PC03 in output pushpull mode */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;    // GPIO_PuPd_NOPULL;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
   
     /** wifi enable **/
