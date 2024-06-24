@@ -39,7 +39,6 @@ RetStatus reportNobodyInfo(char* data, int len)
     u8Data_t u8Data;
     if ((data == NULL) || (len <= 0)) {
         return PINVAL;
-        //return PERROR;
     }
     for (int i = 0; ((i < strlen(data)) && (i < len)); i++) {
         u8Data.u8Val = data[i];

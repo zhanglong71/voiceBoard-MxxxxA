@@ -56,6 +56,7 @@ typedef enum {
     CMSG_DKEY,
     CMSG_UKEY,
     CMSG_DCLK,
+    CMSG_KEY3S,
     
     // CUART1_TOUT,
     CMSG_UART1RTOUT,
@@ -91,7 +92,7 @@ typedef enum {
     CGETCHAR_VOICEPROMPT,
     
     CPUTCHAR_VOICEPROMPT,
-    CPUT_CHAR,
+//    CPUT_CHAR,
     CPUT_SYNC,
     CHEART_BEAT,
     CWIFI_STATUS,

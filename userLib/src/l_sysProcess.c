@@ -179,6 +179,7 @@ int sysProcess(void *pMsg)
         break;
 
     case CGETCHAR_COMMONFAULTDETECTION:
+        /** do what? nothing **/
         break;
         
     case CGETCHAR_NETINFO:
@@ -191,8 +192,8 @@ int sysProcess(void *pMsg)
         (void)reportAckPutSync();
         break;
     
-    case CPUT_CHAR:
-        break;
+    // case CPUT_CHAR:
+    //    break;
         
     case CGETDEVINFO_REQ:
     case CGETDEVINFO_RSPERROR:
@@ -208,7 +209,7 @@ int sysProcess(void *pMsg)
         /** do nothing **/
         break;
     
-    case CWIFI_STATUS:
+    // case CWIFI_STATUS:
     case CDISCONN_CLOUD:
     case CCONN_CLOUD:
         break;
@@ -250,19 +251,6 @@ void deamon_task(void)
 /**************************************************************************************************/
 
 /**************************************************************************************************/
-#if 0
-char* pstrcpy(char* dest, char* src)
-{
-    if ((dest == NULL) || (src == NULL)) {
-        return NULL;
-    }
-    while((*dest++ = *src++) != '\0') {
-        ;
-    }
-    return dest;
-}
-#endif
-/**************************************************************************************************/
 void netInfoData_init(void)
 {
     #if 1
@@ -289,91 +277,45 @@ void checkAndAckGetCharUpdate(void)
 /*****************************************************************************/
 /**
  * ַ¿ذ吨ҪϲӯҴ°带֪µ±ǰ¹¤׷״̬! µ±ǰ·½°¸ʇֱ½ӓÖ÷¿ذ巢À´µē±຅׷Ϊ¹¤׷״̬ͨ¸捊 **/
- #if 1
- Triplet_u8u8pu8_t const voiceIdx2status[] = {
-	// {vopIdx_ConnectNo, CINDEX_CHARGING, &(g_componentStatus.mop)},   //=1, //δÁ¬½Ӊ豸//¹²Ӄ//
-	// {vopIdx_Disconnect, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =2,//ɨ±¸ґ¶Ͽª
-	// {vopIdx_Install, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =3,//½øȫɨփģʽ
-	{vopIdx_VoiceOpen, CINDEX_VOICEPROMPT_ON,  &(g_componentStatus.voicePrompt)},  // =4,//¿ªƴӯҴ
-	{vopIdx_VoiceClose, CINDEX_VOICEPROMPT_OFF, &(g_componentStatus.voicePrompt)},  // =5,//¹رՓ
-	// {vopIdx_WifiReset, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =6,//͸§¸´λ³ɹ¦
-	// {vopIdx_WifiConnecting, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =7,//͸§սԚÁ¬½Ӎ
-	// {vopIdx_WifiOk, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =8,//͸§Á¬½ӳɹ¦
-	
-	{vopIdx_CHing, CINDEX_CHARGING, &(g_componentStatus.charge)},  // =9,//¿ªʼ³䵧
-	{vopIdx_CHcomplete, CINDEX_CHARGECOMPLETE, &(g_componentStatus.charge)},  // =10,//³䵧ґͪ³ɍ
-	{vopIdx_Choff, CINDEX_UNCHARGED, &(g_componentStatus.charge)},  // =11,//³䵧֐¶ύ
-	
-	{vopIdx_standard, CINDEX_STANDARD, &(g_componentStatus.status)},  // =12,//½øȫ±ꗼģʽ
-	{vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.status)},  // =13,//½øȫǿÁ¦ģʽ
-	// {vopIdx_nop2, CINDEX_STANDBY, &(g_componentStatus.mop},  // =14,//´󋮳叴ģʽ
-	// {vopIdx_RUNCL, CINDEX_STANDBY, &(g_componentStatus.mop},  // =15,//½øȫהǥϴģʽ
-	// {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.mop},  // =16,//הǥϴґͪ³ɍ
-	
-	{vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.status)},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
 
-	// {vopIdx_RUNOFF, CINDEX_STANDBY, &(g_componentStatus.mop)},  // =18,//ԋА½ኸ
-	{vopIdx_Chlowing, CINDEX_BATTERYLOW,  &(g_componentStatus.battery)},  // =19,//µ灿²»ף£¬ǫ¼°ʱ³䵧
-	// {nop3, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =20,//µ灿²»ף£¬ǫÁ¢¼´³䵧
-	// {nop4, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =21,//µ灿²»ף£¬ǫ³䵧º󼌐ø
-	{vopIdx_CHErr, CINDEX_CHARGEFAULT, &(g_componentStatus.charge)},  // =22,//³䵧Ҭ³££¬ǫ¼첩³䵧Ʒ
-	//{vopIdx_ConnectDragLala, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =23,//ϴµػúґÁ¬½Ӎ
-	//{vopIdx_CisternOk, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =24,//ˮϤґ°²װ
-	//{vopIdx_CisternNo, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =25,//ˮϤґȡ³ö
-	//{vopIdx_CisternTake,CINDEX_STANDBY,  &(g_componentStatus.battery)},  // =26,//ˮϤґȡ³ö£¬½øȫ´󋮳叴ģʽ
-	{vopIdx_sewageErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =27,//ΛˮϤґº£¬ǫǥÀ펛ˮϤ
-	{vopIdx_ClearErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =28,//ǫ¼ӈ뇥ˮ
-	// {vopIdx_PumpErr, CINDEX_STANDBY, &(g_componentStatus.clearWater)},  // =29,//ˮ±õ绺Ҭ³£
-	// {nop5, CINDEX_STANDBY,  &(g_componentStatus.clearWater)},  // =30,//ˮ±õ绺δ°²װ
-
-	{vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.roller)},  // =31,//ǫ¼첩¹öͲ
+Triplet_u8u8pu8_t const voiceIdx2status[] = {
+    // {vopIdx_ConnectNo, CINDEX_CHARGING, &(g_componentStatus.mop)},   //=1, //δÁ¬½Ӊ豸//¹²Ӄ//
+    // {vopIdx_Disconnect, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =2,//ɨ±¸ґ¶Ͽª
+    // {vopIdx_Install, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =3,//½øȫɨփģʽ
+    {vopIdx_VoiceOpen, CINDEX_VOICEPROMPT_ON,  &(g_componentStatus.voicePrompt)},  // =4,//¿ªƴӯҴ
+    {vopIdx_VoiceClose, CINDEX_VOICEPROMPT_OFF, &(g_componentStatus.voicePrompt)},  // =5,//¹رՓ
+    // {vopIdx_WifiReset, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =6,//͸§¸´λ³ɹ¦
+    // {vopIdx_WifiConnecting, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =7,//͸§սԚÁ¬½Ӎ
+    // {vopIdx_WifiOk, CINDEX_CHARGING, &(g_componentStatus.mop)},  // =8,//͸§Á¬½ӳɹ¦
+    
+    {vopIdx_CHing, CINDEX_CHARGING, &(g_componentStatus.charge)},  // =9,//¿ªʼ³䵧
+    {vopIdx_CHcomplete, CINDEX_CHARGECOMPLETE, &(g_componentStatus.charge)},  // =10,//³䵧ґͪ³ɍ
+    {vopIdx_Choff, CINDEX_UNCHARGED, &(g_componentStatus.charge)},  // =11,//³䵧֐¶ύ
+    
+    {vopIdx_standard, CINDEX_STANDARD, &(g_componentStatus.status)},  // =12,//½øȫ±ꗼģʽ
+    {vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.status)},  // =13,//½øȫǿÁ¦ģʽ
+    // {vopIdx_nop2, CINDEX_STANDBY, &(g_componentStatus.mop},  // =14,//´󋮳叴ģʽ
+    // {vopIdx_RUNCL, CINDEX_STANDBY, &(g_componentStatus.mop},  // =15,//½øȫהǥϴģʽ
+    // {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.mop},  // =16,//הǥϴґͪ³ɍ
+    
+    {vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.status)},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
+    
+    // {vopIdx_RUNOFF, CINDEX_STANDBY, &(g_componentStatus.mop)},  // =18,//ԋА½ኸ
+    {vopIdx_Chlowing, CINDEX_BATTERYLOW,  &(g_componentStatus.battery)},  // =19,//µ灿²»ף£¬ǫ¼°ʱ³䵧
+    // {nop3, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =20,//µ灿²»ף£¬ǫÁ¢¼´³䵧
+    // {nop4, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =21,//µ灿²»ף£¬ǫ³䵧º󼌐ø
+    {vopIdx_CHErr, CINDEX_CHARGEFAULT, &(g_componentStatus.charge)},  // =22,//³䵧Ҭ³££¬ǫ¼첩³䵧Ʒ
+    //{vopIdx_ConnectDragLala, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =23,//ϴµػúґÁ¬½Ӎ
+    //{vopIdx_CisternOk, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =24,//ˮϤґ°²װ
+    //{vopIdx_CisternNo, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =25,//ˮϤґȡ³ö
+    //{vopIdx_CisternTake,CINDEX_STANDBY,  &(g_componentStatus.battery)},  // =26,//ˮϤґȡ³ö£¬½øȫ´󋮳叴ģʽ
+    {vopIdx_sewageErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =27,//ΛˮϤґº£¬ǫǥÀ펛ˮϤ
+    {vopIdx_ClearErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =28,//ǫ¼ӈ뇥ˮ
+    // {vopIdx_PumpErr, CINDEX_STANDBY, &(g_componentStatus.clearWater)},  // =29,//ˮ±õ绺Ҭ³£
+    // {nop5, CINDEX_STANDBY,  &(g_componentStatus.clearWater)},  // =30,//ˮ±õ绺δ°²װ
+    
+    {vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.roller)},  // =31,//ǫ¼첩¹öͲ
 };
- #else
-Quadruple_u8u8u8pu8_t  voiceIdx2status[] = {
-	// {vopIdx_ConnectNo, CINDEX_CHARGING, &(g_componentStatus.mop), 2},   //=1, //δÁ¬½Ӊ豸//¹²Ӄ//
-	// {vopIdx_Disconnect, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =2,//ɨ±¸ґ¶Ͽª
-	// {vopIdx_Install, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =3,//½øȫɨփģʽ
-	// {vopIdx_VoiceOpen, CINDEX_CHARGING,  &(g_componentStatus.mop), 2},  // =4,//¿ªƴӯҴ
-	// {vopIdx_VoiceClose, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =5,//¹رՓ
-	// {vopIdx_WifiReset, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =6,//͸§¸´λ³ɹ¦
-	// {vopIdx_WifiConnecting, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =7,//͸§սԚÁ¬½Ӎ
-	// {vopIdx_WifiOk, CINDEX_CHARGING, &(g_componentStatus.mop), 2},  // =8,//͸§Á¬½ӳɹ¦
-	
-	{vopIdx_CHing, CINDEX_CHARGING, &(g_componentStatus.charge), 2},  // =9,//¿ªʼ³䵧
-	{vopIdx_CHcomplete, CINDEX_CHARGECOMPLETE, &(g_componentStatus.charge), 3},  // =10,//³䵧ґͪ³ɍ
-	{vopIdx_Choff, CINDEX_UNCHARGED, &(g_componentStatus.charge), 1},  // =11,//³䵧֐¶ύ
-	
-	{vopIdx_standard, CINDEX_STANDARD, &(g_componentStatus.mop), 2},  // =12,//½øȫ±ꗼģʽ
-	{vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.mop), 3},  // =13,//½øȫǿÁ¦ģʽ
-	// {vopIdx_nop2, CINDEX_STANDBY, &(g_componentStatus.mop, 1},  // =14,//´󋮳叴ģʽ
-	// {vopIdx_RUNCL, CINDEX_STANDBY, &(g_componentStatus.mop, 1},  // =15,//½øȫהǥϴģʽ
-	// {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.mop, 1},  // =16,//הǥϴґͪ³ɍ
-	
-	{vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.mop), 1},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
-
-	// {vopIdx_RUNOFF, CINDEX_STANDBY, &(g_componentStatus.mop), 1},  // =18,//ԋА½ኸ
-	{vopIdx_Chlowing, CINDEX_BATTERYLOW,  &(g_componentStatus.battery), 1},  // =19,//µ灿²»ף£¬ǫ¼°ʱ³䵧
-	// {nop3, CINDEX_STANDBY, &(g_componentStatus.battery), 1},  // =20,//µ灿²»ף£¬ǫÁ¢¼´³䵧
-	// {nop4, CINDEX_STANDBY, &(g_componentStatus.battery), 1},  // =21,//µ灿²»ף£¬ǫ³䵧º󼌐ø
-	{vopIdx_CHErr, CINDEX_CHARGEFAULT, &(g_componentStatus.charge), 4},  // =22,//³䵧Ҭ³££¬ǫ¼첩³䵧Ʒ
-	//{vopIdx_ConnectDragLala, CINDEX_STANDBY, &(g_componentStatus.battery), 2},  // =23,//ϴµػúґÁ¬½Ӎ
-	//{vopIdx_CisternOk, CINDEX_STANDBY, &(g_componentStatus.battery), 2},  // =24,//ˮϤґ°²װ
-	//{vopIdx_CisternNo, CINDEX_STANDBY, &(g_componentStatus.battery), 2},  // =25,//ˮϤґȡ³ö
-	//{vopIdx_CisternTake,CINDEX_STANDBY,  &(g_componentStatus.battery), 2},  // =26,//ˮϤґȡ³ö£¬½øȫ´󋮳叴ģʽ
-	{vopIdx_sewageErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater), 2},  // =27,//ΛˮϤґº£¬ǫǥÀ펛ˮϤ
-	{vopIdx_ClearErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater), 2},  // =28,//ǫ¼ӈ뇥ˮ
-	// {vopIdx_PumpErr, CINDEX_STANDBY, &(g_componentStatus.clearWater), 2},  // =29,//ˮ±õ绺Ҭ³£
-	// {nop5, CINDEX_STANDBY,  &(g_componentStatus.clearWater), 2},  // =30,//ˮ±õ绺δ°²װ
-
-	{vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.roller), 2},  // =31,//ǫ¼첩¹öͲ
-};
-#endif
-
-Triplet_u8u8pu8_t const voiceIdx2CommonFault[] = {
-	{vopIdx_CHErr, CINDEX_CHARGEFAULT, &(g_componentStatus.commonFaultDetection)},  // =22,//³䵧Ҭ³££¬ǫ¼첩³䵧Ʒ
-    {vopIdx_RollerErr, CINDEX_ROLLEROVERLOAD, &(g_componentStatus.commonFaultDetection)},  // =31,//ǫ¼첩¹öͲ
-};
-
 /*****************************************************************************/
 RetStatus setStatusByvoiceIdx(u8 idx)
 {

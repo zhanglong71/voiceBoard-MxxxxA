@@ -47,7 +47,8 @@ void key_scan(void)
 	msg_t msg;
     static u8 tmr_key = 0;
     static u8 key_last = 0xff;
-
+    static u16 tmr_down = 0;
+#define CKEYTMR_3SEC (300)
     if (MGet_k11("scan k11") == Bit_SET) {
         if (!Mget_bit(key_last, 1)) {
             tmr_key++;
@@ -59,6 +60,13 @@ void key_scan(void)
             }
         } else {
             tmr_key = 0;
+        }
+
+        /** Detect the duration of continuous pressing **/
+        if (tmr_down++ >= CKEYTMR_3SEC) {
+            msg.msgType = CMSG_KEY3S;
+            msgq_in(&g_msgq, &msg);
+            tmr_down = 0;
         }
     } else { /**KEY1 == Bit_RESET **/
         if (Mget_bit(key_last, 1)) {
@@ -72,6 +80,8 @@ void key_scan(void)
         } else {
             tmr_key = 0;
         }
+        
+        tmr_down = 0;
     }
 }
 

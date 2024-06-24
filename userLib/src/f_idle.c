@@ -9,6 +9,8 @@
 #include "l_rs485.h"
 #include "l_jsonTL.h"
 #include "l_flash.h"
+#include "l_actionFIFO.h"
+
 #include "f_init.h"
 #include "f_idle.h"
 
@@ -22,14 +24,14 @@ int f_idle(void *pMsg)
 //    int len;
 //    u8Data_t u8Data;
     // char *ptr;
-    
+#define CREPORT_PERIOD (11)
     RetStatus retStatus = POK;
     switch(((msg_t *)pMsg)->msgType) 
     {
     case CMSG_TMR:
         g_tick++;
 
-        if ((g_tick % 10) == 1) {
+        if ((g_tick % CREPORT_PERIOD) == 1) {
             if ((g_componentStatus.status != CINDEX_STANDBY) && (g_componentStatus.charge == CINDEX_CHARGING)) {
                 /** work & charging, then exit **/
                 g_componentStatus.status = CINDEX_STANDBY;
@@ -37,25 +39,42 @@ int f_idle(void *pMsg)
             reportComponentStatus(g_componentStatus.status);
         }
         // ?????????????????????????
-        #if 0
-        if  ((g_tick % 10) == 2) {
-            memset(g_buf, 0, 128);
-            flashPage_get(g_buf);
-
-            for (int i = 0; i < 32; i++) {
-                u8Data.u8Val = g_buf[i];
-                u8FIFOin_irq(&g_uart1TxQue, &u8Data);
-            }
-            
-            for (int i = 0; i < 8; i++) {
-                u8Data.u8Val = g_buf[120 + i];
-                u8FIFOin_irq(&g_uart1TxQue, &u8Data);
-            }
-            g_buf[0]++;
-            g_buf[1]++;
-            g_buf[120]++;
-            g_buf[121]++;
-            userData_update(g_buf);
+        #if 1
+          /******************************************************************************************
+           * ³äµç×´Ì¬
+           ******************************************************************************************/
+          if ((g_tick % CREPORT_PERIOD) == 0) {  /** updata battery level every CYCLE sec **/
+              reportComponentStatus(g_componentStatus.charge);
+          }
+          /******************************************************************************************
+           * ¹¤×÷×´Ì¬ÉÏ±¨
+           ******************************************************************************************/
+          if ((g_tick % CREPORT_PERIOD) == 1) {  /** updata every CYCLE sec **/
+              // reportComponentStatus(g_componentStatus.status);
+          }
+          /******************************************************************************************
+           * ¹öÍ²×´Ì¬
+           ******************************************************************************************/
+          if ((g_tick % CREPORT_PERIOD) == 2) {  /** updata every CYCLE sec **/
+              reportComponentStatus(g_componentStatus.roller);
+          }
+        /******************************************************************************************
+         * Ë®±Ã×´Ì¬
+         ******************************************************************************************/
+        if ((g_tick % CREPORT_PERIOD) == 3) {  /** updata every CYCLE sec **/
+            reportComponentStatus(g_componentStatus.pump);
+        }
+        /******************************************************************************************
+         * µç³Ø×´Ì¬
+         ******************************************************************************************/
+        if ((g_tick % CREPORT_PERIOD) == 4) {  /** updata every CYCLE sec **/
+            reportComponentStatus(g_componentStatus.battery);
+        }
+        /******************************************************************************************
+         * ÇåË®×´Ì¬
+         ******************************************************************************************/
+        if ((g_tick % CREPORT_PERIOD) == 5) {  /** updata every CYCLE sec **/
+            reportComponentStatus(g_componentStatus.clearWater);
         }
         #endif
         // ?????????????????????????
@@ -89,6 +108,18 @@ int f_idle(void *pMsg)
         ClrTimer_irq(&g_timer[3]);
         break;
     /** check double click block end **/
+
+    case CMSG_KEY3S:
+        /** charging and press key 3s, then reset wifi module **/
+        if ((g_componentStatus.charge == CINDEX_CHARGING) || 
+            (g_componentStatus.charge == CINDEX_CHARGECOMPLETE) || 
+            (g_componentStatus.charge == CINDEX_CHARGEREPAIR) ||
+            (g_componentStatus.charge == CINDEX_CHARGEFAULT)) {
+            reportResetNet();     // !!!!!!!!!!
+            vp_stop1();
+            vp_stor(vopIdx_WifiReset);
+        }
+        break;
 
     case CMSG_TEST:
     // case CMSG_2TEST:
