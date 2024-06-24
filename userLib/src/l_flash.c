@@ -13,6 +13,7 @@
 #define FLASH_PAGE_SIZE         ((uint32_t)0x00000080)   /* FLASH Page Size */
 #define FLASH_USER_START_ADDR   ((uint32_t)0x08007E80)   /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR     ((uint32_t)0x08007F00)   /* End @ of user Flash area */
+#define FLASH_USER_MAGIC_OFFSET ((uint32_t)122)   /* offset of magic address(122 - 127) */
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 // uint32_t Data = 0x3210ABCD;
@@ -63,17 +64,9 @@ RetStatus flashPage_update(char* inData)
     return POK;
 }
 
-RetStatus userData_update(char* inData)
-{
-    inData[122] = 'D';
-    inData[123] = 'I';
-    inData[124] = 'I';
-    inData[125] = 'S';
-    inData[126] = 'E';
-    inData[127] = 'A';  // magic 
-    return flashPage_update(inData);
-}
-
+/***********************************************************************************************
+ * note: assume the outData is g_buf[128]
+ ***********************************************************************************************/
 char* flashPage_get(char* outData)
 {
     /** use uint16_t not char*, the reson is the operator consistent to FLASH_ProgramHalfWord() **/
@@ -84,5 +77,44 @@ char* flashPage_get(char* outData)
         dst[i] = src[i];
     }
     return (char*)FLASH_USER_START_ADDR;
+}
+
+/***********************************************************************************************
+ * note: assume the outData is g_buf[128]
+ ***********************************************************************************************/
+const static char magic[] = "DIISEA";
+RetStatus userData_update(char* inData)
+{
+#if 0
+    inData[122] = magic[0];
+    inData[123] = magic[1];
+    inData[124] = magic[2];
+    inData[125] = magic[3];
+    inData[126] = magic[4];
+    inData[127] = magic[5];  // magic 
+#else
+    int len = strlen(magic);
+    for (int i = 0; i < len; i++) {
+       inData[FLASH_USER_MAGIC_OFFSET + i] = magic[i];   // magic
+    }
+#endif
+    return flashPage_update(inData);
+}
+
+/***********************************************************************************************
+ * note: assume the outData is g_buf[128]
+ ***********************************************************************************************/
+int UserData_isValid(char* outData)
+{
+    int i;
+    int len = strlen(magic);
+
+    char* src = (char *)(FLASH_USER_START_ADDR + FLASH_USER_MAGIC_OFFSET);
+    char* dst = (char *)outData;
+    for (i = 0; i < len; i++) {
+        dst[i] = src[i];
+    }
+    dst[i] = '\0';
+    return strcmp(magic, dst);
 }
 

@@ -24,7 +24,7 @@ void GPIO_initVOPPort(void)
       
     /* Configure PD03(busy) in input mode for busy status */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
   
@@ -36,7 +36,6 @@ void GPIO_initVOPPort(void)
 
 void watchDog_init(void)
 {
-#if 1
     /* IWDG timeout equal to 250 ms (the timeout may varies due to LSI frequency
        dispersion) */
     /* Enable write access to IWDG_PR and IWDG_RLR registers */
@@ -59,13 +58,11 @@ void watchDog_init(void)
     
     /* Enable IWDG (the LSI oscillator will be enabled by hardware) */
     IWDG_Enable();
-#endif
 }
 
 void GPIO_keyScanInit(void)
 {
     GPIO_InitTypeDef        GPIO_InitStructure;
-   
     /* Enable GPIOC clock */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
     
@@ -74,6 +71,28 @@ void GPIO_keyScanInit(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+/**
+ * PD01 --- Wifi 
+Module Enable
+ **/
+void GPIO_wifiModuleInit(void)
+{
+    GPIO_InitTypeDef        GPIO_InitStructure;
+    /* Enable GPIOD clock */
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
+    
+    /* Configure PD01 in output pushpull mode */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOD, &GPIO_InitStructure);
+    
+    // MWifi_Disable("Disable WIFI module!");
+    MWifi_Enable("Enable WIFI module!");
 }
 
 /**********************
@@ -87,8 +106,8 @@ void GPIO_init4led(void)
   
     /* Configure PC03 in output pushpull mode */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-    //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
@@ -103,6 +122,6 @@ void GPIO_init4led(void)
 
 void GPIO_led_blink(void)
 {
-    GPIO_Toggle(GPIOD, GPIO_Pin_3);
-    GPIO_Toggle(GPIOD, GPIO_Pin_4);
+    GPIO_Toggle(GPIOC, GPIO_Pin_3);
+    GPIO_Toggle(GPIOC, GPIO_Pin_4);
 }

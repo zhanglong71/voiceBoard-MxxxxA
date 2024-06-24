@@ -20,7 +20,7 @@
 int f_idle(void *pMsg)
 {
 //    int len;
-    u8Data_t u8Data;
+//    u8Data_t u8Data;
     // char *ptr;
     
     RetStatus retStatus = POK;
@@ -37,7 +37,7 @@ int f_idle(void *pMsg)
             reportComponentStatus(g_componentStatus.status);
         }
         // ?????????????????????????
-        #if 1
+        #if 0
         if  ((g_tick % 10) == 2) {
             memset(g_buf, 0, 128);
             flashPage_get(g_buf);
@@ -54,7 +54,7 @@ int f_idle(void *pMsg)
             g_buf[0]++;
             g_buf[1]++;
             g_buf[120]++;
-            g_buf[127]++;
+            g_buf[121]++;
             userData_update(g_buf);
         }
         #endif
@@ -91,17 +91,25 @@ int f_idle(void *pMsg)
     /** check double click block end **/
 
     case CMSG_TEST:
-    case CMSG_2TEST:
+    // case CMSG_2TEST:
         // test only ????????????????????
         #if 0
-        if (u8FIFOout_irq(&g_uart1RxQue, &u8Data) == TRUE) {
-            rs485_stor_irq(&u8Data);
-        }
+        u8Data.u8Val = 'K';
+        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
+        u8Data.u8Val = 'K';
+        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
+        u8Data.u8Val = 'K';
+        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
+        
+        //if (u8FIFOout_irq(&g_uart1RxQue, &u8Data) == TRUE) {
+        //    rs485_stor_irq(&u8Data);
+        //}
        
-        if (u8FIFOout_irq(&g_uart2RxQue, &u8Data) == TRUE) {
-            u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-        }
+        //if (u8FIFOout_irq(&g_uart2RxQue, &u8Data) == TRUE) {
+        //    u8FIFOin_irq(&g_uart2TxQue, &u8Data);
+        //}
         #endif
+        // test only ????????????????????
         break;
         
     default:

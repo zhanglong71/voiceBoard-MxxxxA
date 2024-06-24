@@ -47,7 +47,7 @@ int f_init(void *pMsg)
         GPIO_initVOPPort();
         GPIO_keyScanInit();
         GPIO_init4led();
-        GPIO_wifiEnable();
+        GPIO_wifiModuleInit();
         watchDog_init();
         /*** step2 varitual about Periph_Driver ***************************************************/
         vp_init();

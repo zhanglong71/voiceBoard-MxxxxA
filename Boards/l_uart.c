@@ -176,23 +176,6 @@ void GPIO_init485(void)
   M485TR_R("initialized as input state");
 }
 
-void GPIO_wifiEnable(void)
-{
-  GPIO_InitTypeDef GPIO_InitStructure;
-  /* GPIOD Periph clock enable */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE); //  enable in RCC_Configuration4uart();
-
-  /* Configure PB04() in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;  // GPIO_PuPd_NOPULL;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  MWifi_Enable("Enable wifi module");
-}
-
 #if 0
 void deamon_485uart1_send(void)
 {

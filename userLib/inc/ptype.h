@@ -42,7 +42,7 @@ typedef struct {
 typedef enum {
     CMSG_NONE = 0, 
     CMSG_TEST,    /** for test only **/
-    CMSG_2TEST,    /** for test only **/
+    // CMSG_2TEST,    /** for test only **/
 /*************
  * 重新拟定消息命名规则
  * 1. 普通以CMSG_xxx形式命名
