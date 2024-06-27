@@ -38,46 +38,9 @@ int f_idle(void *pMsg)
             }
             reportComponentStatus(g_componentStatus.status);
         }
-        // ?????????????????????????
-        #if 1
-          /******************************************************************************************
-           * ³äµç×´Ì¬
-           ******************************************************************************************/
-          if ((g_tick % CREPORT_PERIOD) == 0) {  /** updata battery level every CYCLE sec **/
-              reportComponentStatus(g_componentStatus.charge);
-          }
-          /******************************************************************************************
-           * ¹¤×÷×´Ì¬ÉÏ±¨
-           ******************************************************************************************/
-          if ((g_tick % CREPORT_PERIOD) == 1) {  /** updata every CYCLE sec **/
-              // reportComponentStatus(g_componentStatus.status);
-          }
-          /******************************************************************************************
-           * ¹öÍ²×´Ì¬
-           ******************************************************************************************/
-          if ((g_tick % CREPORT_PERIOD) == 2) {  /** updata every CYCLE sec **/
-              reportComponentStatus(g_componentStatus.roller);
-          }
-        /******************************************************************************************
-         * Ë®±Ã×´Ì¬
-         ******************************************************************************************/
-        if ((g_tick % CREPORT_PERIOD) == 3) {  /** updata every CYCLE sec **/
-            reportComponentStatus(g_componentStatus.pump);
+        if (g_componentStatus.netConnection == CINDEX_NETCONNECTION_ON) {
+            reportStatusOneByOne();
         }
-        /******************************************************************************************
-         * µç³Ø×´Ì¬
-         ******************************************************************************************/
-        if ((g_tick % CREPORT_PERIOD) == 4) {  /** updata every CYCLE sec **/
-            reportComponentStatus(g_componentStatus.battery);
-        }
-        /******************************************************************************************
-         * ÇåË®×´Ì¬
-         ******************************************************************************************/
-        if ((g_tick % CREPORT_PERIOD) == 5) {  /** updata every CYCLE sec **/
-            reportComponentStatus(g_componentStatus.clearWater);
-        }
-        #endif
-        // ?????????????????????????
         break;
         
     case CMSG_INIT:
@@ -96,7 +59,7 @@ int f_idle(void *pMsg)
             Mreset_bit(g_flag, 1);
             ClrTimer_irq(&g_timer[3]);
    
-            reportResetNet(); // !!!!!!!!!! 
+            // reportResetNet(); // !!!!!!!!!! double click ok!!! giveup !!!
         } else  { /**  **/
             Mset_bit(g_flag,1);
             SetTimer_irq(&g_timer[3], TIMER_400MS, CMSG_DCLK);
@@ -122,25 +85,6 @@ int f_idle(void *pMsg)
         break;
 
     case CMSG_TEST:
-    // case CMSG_2TEST:
-        // test only ????????????????????
-        #if 0
-        u8Data.u8Val = 'K';
-        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-        u8Data.u8Val = 'K';
-        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-        u8Data.u8Val = 'K';
-        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-        
-        //if (u8FIFOout_irq(&g_uart1RxQue, &u8Data) == TRUE) {
-        //    rs485_stor_irq(&u8Data);
-        //}
-       
-        //if (u8FIFOout_irq(&g_uart2RxQue, &u8Data) == TRUE) {
-        //    u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-        //}
-        #endif
-        // test only ????????????????????
         break;
         
     default:

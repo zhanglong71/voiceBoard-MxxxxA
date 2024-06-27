@@ -71,6 +71,20 @@ RetStatus reportAckPutSync(void)
     return reportNobodyInfo(buf, strlen(buf));
 }
 
+#if 0
+RetStatus reportWifiConnected(void)
+{
+    char buf[] = "wifi,1,1\n";
+    return reportNobodyInfo(buf, strlen(buf));
+}
+
+RetStatus reportWifiDisConnected(void)
+{
+    char buf[] = "wifi,1,0\n";
+    return reportNobodyInfo(buf, strlen(buf));
+}
+#endif
+
 #if 0   // !!! 
 int reportConnectWifi(void *arg)
 {
@@ -86,6 +100,7 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     { CINDEX_STANDBY,             "{\"status\":{\"status\":0}}"},              // standby
     { CINDEX_STANDARD,            "{\"status\":{\"status\":1}}"},              // standard
     { CINDEX_HIGHPOWER,           "{\"status\":{\"status\":2}}"},              // highPower
+    { CINDEX_CLEANING,            "{\"status\":{\"status\":3}}"},               // shelf clear
  /****/   
     { CINDEX_PUMPNORMAL,          "{\"commonFaultDetection\":{\"code\":107}}"},               // pumpNormal
     { CINDEX_PUMPOVERLOAD,        "{\"commonFaultDetection\":{\"code\":106}}"},               // pumpOverload
@@ -880,6 +895,28 @@ RetStatus KeyBody2objType(u8 key_idx, objType_t* objType)
         }
     }
    return PERROR;
+}
+
+/******************************************************************************************/
+u8* ComponentFieldArr[] = {
+    &(g_componentStatus.roller),
+    &(g_componentStatus.pump),
+    &(g_componentStatus.battery),
+    &(g_componentStatus.charge),
+    &(g_componentStatus.clearWater),
+    // &(g_componentStatus.status),
+    // &(g_componentStatus.voicePrompt),
+    // &(g_componentStatus.commonFaultDetection),
+    // &(g_componentStatus.netConnection),     // no need
+};
+void reportStatusOneByOne(void)
+{
+    /** execute only one time when connectied cloud **/
+    static u8 count = 0;
+    if (count < MTABSIZE(ComponentFieldArr)) {
+        reportComponentStatus(*(ComponentFieldArr[count]));
+        count++;
+    }
 }
 /******************************************************************************************/
 /**

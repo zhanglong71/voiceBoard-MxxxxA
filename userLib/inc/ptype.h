@@ -383,7 +383,7 @@ typedef enum {
 
 /*******************************************************************************/
 typedef struct ComponentField_s{
-    u8 mop;          // // !!!!!!!!!! giveup the status!!!!!!!!!!!!!
+//    u8 mop;          // // !!!!!!!!!! giveup the status!!!!!!!!!!!!!
 	u8 roller;       // roller fault state
 	u8 pump;         // pump fault state
 	u8 battery;      // Low voltage or not 
@@ -391,7 +391,12 @@ typedef struct ComponentField_s{
 	u8 clearWater;   // tank state
     u8 status;       // the mechine work state      
     u8 voicePrompt;  // voice prompt on/off
-    u8 commonFaultDetection;  // the last state of  roller/pump/charging!
+    u8 commonFaultDetection;
+    /**
+     * the last state of roller/pump/charging! the status record on roller/pump/battery/charge etc ... so no need
+     * It is only used to answer the commonFault command! the roller/pump/charging status will Complete the status
+     **/
+    u8 netConnection; // the internet connection status
     /**
      * the mechine state! 
      * 

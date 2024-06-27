@@ -1,8 +1,8 @@
 #ifndef __L_ARCH_H__
 #define __L_ARCH_H__
 
-void IRQ_disable(void);
-void IRQ_enable(void);
+inline void IRQ_disable(void){__disable_irq();};
+inline void IRQ_enable(void){__enable_irq();};
 
 void fstack_init(fstack_t *s);
 int fstack_pop(fstack_t *s, func_t *f);

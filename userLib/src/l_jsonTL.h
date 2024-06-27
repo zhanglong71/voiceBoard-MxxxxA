@@ -49,6 +49,7 @@ RetStatus reportgetSsid(void);
 RetStatus reportgetIp(void);
 RetStatus reportgetMac(void);
 RetStatus reportgetRssi(void);
+void reportStatusOneByOne(void);
 
 unsigned char JsonParseL0(char* jsonstrbuf, kv_t* jsonstcarr);
 RetStatus JsonParseL1(char* jsonstrbuf, kv_t* jsonstcarr);

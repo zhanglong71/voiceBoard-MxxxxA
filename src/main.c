@@ -78,9 +78,8 @@ NetInfo_t g_netInfo;
  * record wifi net information
  **/
 /******************************************************************************/
-#if 1
 ComponentField_t g_componentStatus = {
-    .mop                  = CINDEX_STANDBY,
+//    .mop                  = CINDEX_STANDBY,
     .roller               = CINDEX_ROLLERNORMAL,
     .pump                 = CINDEX_PUMPNORMAL,
     .battery              = CINDEX_BATTERYNORMAL,
@@ -89,19 +88,8 @@ ComponentField_t g_componentStatus = {
     .status               = CINDEX_STANDBY,
     .voicePrompt          = CINDEX_VOICEPROMPT_ON,
     .commonFaultDetection = CINDEX_STANDBY,
+    .netConnection        = CINDEX_NETCONNECTION_OFF,
 };
-#else
-ComponentField_t g_componentStatus = {CINDEX_STANDBY,  // mop --- standby
-                                      CINDEX_ROLLERNORMAL,  // roller --- ¹öͲս³£
-                                      CINDEX_PUMPNORMAL,  // pump --- ˮ±Õý³£
-                                      CINDEX_BATTERYNORMAL,  // battery --- µ糘ս³£
-                                      CINDEX_UNCHARGED,  // charge --- δ³䵧
-                                      CINDEX_CLEARWATERNORMAL,   // clearWater --- ǥˮս³£
-                                      CINDEX_STANDBY,   // default standby
-                                      CINDEX_VOICEPROMPT_ON,
-                                      CINDEX_STANDBY
-                                      };
-#endif
 /******************************************************************************/
 char g_buf[U8FIFOSIZE];    // Temporary variables for uart received data resolve
 kv_t g_KVarr[CKVTABSIZE];  // Temporary variables for uart received data resolve
