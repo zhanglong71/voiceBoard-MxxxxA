@@ -817,7 +817,7 @@ const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_CHARGE,                CGETCHAR_CHARGE},           // protocal changed, give up    
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_STATUS,                CGETCHAR_STATUS},
     {CKEYINDEX_GETCHAR,       11, CBODYINDEX_VOICEPROMPT,           CGETCHAR_VOICEPROMPT},
-    {CKEYINDEX_GETCHAR,       11, CBODYINDEX_COMMONFAULTDETECTION,  CGETCHAR_COMMONFAULTDETECTION},
+    {CKEYINDEX_GETCHAR,       20, CBODYINDEX_COMMONFAULTDETECTION,  CGETCHAR_COMMONFAULTDETECTION},
     
     {CKEYINDEX_GETCHAR,       7,  CBODYINDEX_NETINFO,       CGETCHAR_NETINFO},           // protocal changed, give up    
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_UPDATE,        CGETCHAR_UPDATE},            // protocal changed, give up    
