@@ -71,6 +71,20 @@ RetStatus reportAckPutSync(void)
     return reportNobodyInfo(buf, strlen(buf));
 }
 
+/** set interval time(ms) **/
+RetStatus reportSetCmdInterval(void)
+{
+    char buf[] = "setCmdInterval,2,70\n";
+    return reportNobodyInfo(buf, strlen(buf));
+}
+
+/** get interval time(ms) **/
+RetStatus reportgetCmdInterval(void)
+{
+    char buf[] = "getCmdInterval,0\n";
+    return reportNobodyInfo(buf, strlen(buf));
+}
+
 #if 0
 RetStatus reportWifiConnected(void)
 {
@@ -113,9 +127,10 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     
     { CINDEX_CHARGEREPAIR,        "{\"commonFaultDetection\":{\"code\":101}}"},               // charging fault recover to normal
     { CINDEX_CHARGEFAULT,         "{\"commonFaultDetection\":{\"code\":100}}"},               // charging fault
+    { CINDEX_NODEFAULT,           "{\"commonFaultDetection\":{\"code\":000}}"},               // no fault
  /****/   
-    { CINDEX_CLEARWATERNORMAL,    "{\"clearWaterBoxState\":{\"status\":0}}"},  // clear water normal
-    { CINDEX_CLEARWATERSHORTAGE,  "{\"clearWaterBoxState\":{\"status\":1}}"},  // clear water shortage
+    { CINDEX_CLEANWATERNORMAL,    "{\"cleanwaterboxstate\":{\"status\":0}}"},  // clear water normal
+    { CINDEX_CLEANWATERSHORTAGE,  "{\"cleanwaterboxstate\":{\"status\":1}}"},  // clear water shortage
     
     { CINDEX_UNCHARGED,           "{\"battery\":{\"charging\":0}}"},           // Not Charging
     { CINDEX_CHARGING,            "{\"battery\":{\"charging\":1}}"},           // Charging
@@ -454,7 +469,7 @@ jsonTL_t* getService(u8 idx)
                 "]"
                 #else
                 "\"sId\":["
-                    "\"cleanWaterBoxState\","
+                    "\"cleanwaterboxstate\","
                     "\"battery\","
                     "\"status\","
                     "\"commonFaultDetection\","
@@ -758,7 +773,9 @@ void sm_sendData(jsonTL_t* jp)
     {CKEYINDEX_GETIP,         "getIp"},           /** netInfo ip !!! **/
     {CKEYINDEX_GETMAC,        "getMac"},          /** netInfo mac !!! **/
     {CKEYINDEX_GETRSSI,       "getRssi"},         /** netInfo rssi !!! **/
-    {CKEYINDEX_PUTSYNC,       "putSync"},          /** netInfo mac !!! **/
+    {CKEYINDEX_PUTSYNC,       "putSync"},         /** netInfo mac !!! **/
+    {CKEYINDEX_SETCMDINTERVAL,"setCmdInterval"},  /** interval time !!! **/
+    {CKEYINDEX_GETCMDINTERVAL,"getCmdInterval"},  /** interval time !!! **/
     // {"\"getDevInfo\"", 0},   /**  **/
 
 #define CTestWIFIkeyIdx (MTABSIZE(commandKeyArr))
@@ -773,7 +790,7 @@ const pair_u8s8p_t commandBodyArr[] = {
     {CBODYINDEX_ERROR,                  "error"},
  // {CBODYINDEX_MOP,                    "mop"},
  // {CBODYINDEX_ROLLER,                 "roller"},
-    {CBODYINDEX_CLEARWATERBOXSTATE,     "clearWaterBoxState"},
+    {CBODYINDEX_CLEANWATERBOXSTATE,     "cleanwaterboxstate"},
  // {CBODYINDEX_PUMP,                   "pump"},
     {CBODYINDEX_BATTERY,                "battery"},
 //  {CBODYINDEX_CHARGE,                 "charge"},
@@ -812,7 +829,7 @@ const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
     {CKEYINDEX_GETCHAR,       3,  CBODYINDEX_MOP,                   CGETCHAR_MOP},              // protocal changed, give up
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_ROLLER,                CGETCHAR_ROLLER},           // protocal changed, give up
     {CKEYINDEX_GETCHAR,       4,  CBODYINDEX_PUMP,                  CGETCHAR_PUMP},             // protocal changed, give up
-    {CKEYINDEX_GETCHAR,       18, CBODYINDEX_CLEARWATERBOXSTATE,    CGETCHAR_CLEARWATERBOXSTATE},
+    {CKEYINDEX_GETCHAR,       18, CBODYINDEX_CLEANWATERBOXSTATE,    CGETCHAR_CLEANWATERBOXSTATE},
     {CKEYINDEX_GETCHAR,       7,  CBODYINDEX_BATTERY,               CGETCHAR_BATTERY},
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_CHARGE,                CGETCHAR_CHARGE},           // protocal changed, give up    
     {CKEYINDEX_GETCHAR,       6,  CBODYINDEX_STATUS,                CGETCHAR_STATUS},
@@ -835,15 +852,22 @@ const static Quadruple_keylenbody_t identifyKeyBodyMsg[] = {
     {CKEYINDEX_GETWIFISTATUS, 1,  CBODYINDEX_1,             CCONN_CLOUD},
     {CKEYINDEX_GETWIFISTATUS, 1,  CBODYINDEX_0,             CDISCONN_CLOUD},
     
+    {CKEYINDEX_SETCMDINTERVAL,2,  CBODYINDEX_OK,            CSETCMDINTERVAL_RSPOK},
+    {CKEYINDEX_SETCMDINTERVAL,5,  CBODYINDEX_ERROR,         CSETCMDINTERVAL_RSPERROR},
+    
+    {CKEYINDEX_GETCMDINTERVAL,1,  0,                        CMSG_NONE},
+    {CKEYINDEX_GETCMDINTERVAL,2,  0,                        CMSG_NONE},
+    {CKEYINDEX_GETCMDINTERVAL,3,  0,                        CMSG_NONE},
+
     {CKEYINDEX_HEARTBEAT,     0,  0,                        CHEART_BEAT},
     {CKEYINDEX_GETDEVINFO,    0,  0,                        CGETDEVINFO_REQ},
- 
+
     {CKEYINDEX_PUTSYNC,       0,  0,                        CPUT_SYNC},
     {CKEYINDEX_PUTCHAR,       0,  0,                        CMSG_NONE /* CPUTCHAR_VOICEPROMPT */ },  // !!!!!!
     // {CKEYINDEX_SCANWIFI,      0,  0,                        CSCAN_WIFI},
     // {CKEYINDEX_CONNECTWIFI,   0,  0,                        CCONN_WIFI},
     // {CKEYINDEX_PUTWIFISTATUS, 0,  0,                        CMSG_NONE},
-    
+
     {CKEYINDEX_GETSSID,       0,  0,                        CMSG_NONE},
     {CKEYINDEX_GETIP,         0,  0,                        CMSG_NONE},
     {CKEYINDEX_GETMAC,        0,  0,                        CMSG_NONE},
@@ -903,7 +927,7 @@ u8* ComponentFieldArr[] = {
     &(g_componentStatus.pump),
     &(g_componentStatus.battery),
     &(g_componentStatus.charge),
-    &(g_componentStatus.clearWater),
+    &(g_componentStatus.cleanWater),
     // &(g_componentStatus.status),
     // &(g_componentStatus.voicePrompt),
     // &(g_componentStatus.commonFaultDetection),

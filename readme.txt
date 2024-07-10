@@ -26,7 +26,7 @@ getChar,6,update\n
 改为
 getChar,6,status\n
 getChar,7,battery\n
-getChar,18,clearWaterBoxState\n
+getChar,18,cleanWaterBoxState\n
 getChar,11,voiceprompt\n
 getChar,20,commonFaultDetection\n
 
@@ -50,3 +50,6 @@ putChar,28,{"voiceprompt":{"switch":1}}\n
 2024/6/24 17:36:31 wifi复位功能接口修改(工作时双击 --> 充电时长按3秒); 各种状态定时上报(似不必要，待优化)
 2024/6/27 16:54:09 处理wifi模组发来的网络状态及数据上报(连接到云端时才上报数据，上电后只报一次; 通过与PC串口对接抓包的方式验证ok)
 2024/7/9 9:00:54 命令识别数组identifyKeyBodyMsg[]中key/len/body/msg中COMMONFAULTDETECTION一项的长度修正(11->20)
+2024/7/10 14:49:09 reportService之后增加指令间隔时长 setCmdInterval；
+                   按合作方指导修改 cleanwaterboxstate(原为clearwaterboxstate,另有大小写区别) 命令关键字，相应的宏定义全部改掉; 
+                   修改commonFaultDetection命令响应(原设计分散到roller/pump/charge状态中)，修改后将roller/pump/charge错误状态赋给 commonFaultDetection;

@@ -36,6 +36,9 @@ RetStatus reportgetCharNetInfo(NetInfo_t* netInfo);
 RetStatus reportAckPutSync(void);
 RetStatus reportNobodyInfo(char* data, int len);
 
+RetStatus reportSetCmdInterval(void);
+RetStatus reportGetCmdInterval(void);
+
 int reportComponentStatus(u8 statusIndex);
 
 int getCharAckComponentStatus(u8 statusIndex);

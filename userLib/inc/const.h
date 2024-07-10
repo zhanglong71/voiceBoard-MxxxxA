@@ -71,8 +71,8 @@
 #define CINDEX_ROLLEROVERLOAD         (6)
 #define CINDEX_ROLLERNORMAL           (7)
 
-#define CINDEX_CLEARWATERNORMAL       (8)
-#define CINDEX_CLEARWATERSHORTAGE     (9)
+#define CINDEX_CLEANWATERNORMAL       (8)
+#define CINDEX_CLEANWATERSHORTAGE     (9)
 
 #define CINDEX_PUMPNORMAL             (10)
 #define CINDEX_PUMPOVERLOAD           (11)
@@ -87,6 +87,7 @@
 #define CINDEX_CHARGECOMPLETE         (18)
 #define CINDEX_CHARGEFAULT            (19)
 #define CINDEX_CHARGEREPAIR           (20)
+#define CINDEX_NODEFAULT              (21)
 
 #define CINDEX_CONNECTED              (25)
 #define CINDEX_DISCONNECTED           (26)
@@ -158,17 +159,19 @@
 #define CKEYINDEX_GETMAC                 (13)
 #define CKEYINDEX_PUTSYNC                (14)
 #define CKEYINDEX_GETDEVINFO             (15)
+#define CKEYINDEX_SETCMDINTERVAL         (16)
+#define CKEYINDEX_GETCMDINTERVAL         (17)
 
 /*** L1 key ***/
-#define CL1KEYINDEX_VOICEPROMPT          (16)
+#define CL1KEYINDEX_VOICEPROMPT          (20)
 
 
 /*** L0 key ***/
-#define CL0KEYINDEX_SWITCH               (17)
+#define CL0KEYINDEX_SWITCH               (30)
 
 /*** L0 value ***/
-#define CL0VALUEINDEX_0             (18)
-#define CL0VALUEINDEX_1             (19)
+#define CL0VALUEINDEX_0             (40)
+#define CL0VALUEINDEX_1             (41)
 
 /*******************************************************************************/
 #define CBODYINDEX_NONE                   (0)
@@ -176,8 +179,7 @@
 #define CBODYINDEX_ERROR                  (2)
 #define CBODYINDEX_MOP                    (3)
 #define CBODYINDEX_ROLLER                 (4)
-#define CBODYINDEX_CLEARWATER             (5)
-#define CBODYINDEX_CLEARWATERBOXSTATE     (5)
+#define CBODYINDEX_CLEANWATERBOXSTATE     (5)
 #define CBODYINDEX_PUMP                   (6)
 #define CBODYINDEX_BATTERYSTATUS          (7)
 #define CBODYINDEX_BATTERY                (7)

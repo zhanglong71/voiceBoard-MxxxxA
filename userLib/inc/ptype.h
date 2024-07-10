@@ -77,11 +77,14 @@ typedef enum {
     
     CREPORT_RSPOK,
     CREPORT_RSPERROR,
+    
+    CSETCMDINTERVAL_RSPOK,
+    CSETCMDINTERVAL_RSPERROR,
     // CGET_CHAR,
     CGETCHAR_STATUS,
     CGETCHAR_MOP,
     CGETCHAR_ROLLER,
-    CGETCHAR_CLEARWATERBOXSTATE,
+    CGETCHAR_CLEANWATERBOXSTATE,
     CGETCHAR_PUMP,
     CGETCHAR_BATTERY,
     CGETCHAR_CHARGE,
@@ -388,7 +391,7 @@ typedef struct ComponentField_s{
 	u8 pump;         // pump fault state
 	u8 battery;      // Low voltage or not 
 	u8 charge;       // charge state
-	u8 clearWater;   // tank state
+	u8 cleanWater;   // tank state
     u8 status;       // the mechine work state      
     u8 voicePrompt;  // voice prompt on/off
     u8 commonFaultDetection;

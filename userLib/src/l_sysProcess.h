@@ -11,6 +11,8 @@ void netInfoData_init(void);
 
 RetStatus setStatusByvoiceIdx(u8 idx);
 RetStatus reportStatusByvoiceIdx(u8 idx);
+RetStatus setCommonFaultStatusByComponent(void);
+
 RetStatus AckgetCharStatusByMsgType(msgType_t msgType);
 RetStatus AckPutCharStatusByMsgType(msgType_t msgType);
 RetStatus setStatusByMsgType(msgType_t msgType);

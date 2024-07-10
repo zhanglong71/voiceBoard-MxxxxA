@@ -140,6 +140,7 @@ int sysProcess(void *pMsg)
                         }
                     }
                     setStatusByvoiceIdx((u8)voi);
+                    setCommonFaultStatusByComponent();
                     reportStatusByvoiceIdx((u8)voi);
                     /** construct ack**/
                     generateVoiceAckOk(g_KVarr[src_idx].key, u8Seq_last);
@@ -174,17 +175,14 @@ int sysProcess(void *pMsg)
         
     case CGETCHAR_MOP:
     case CGETCHAR_ROLLER:
-    case CGETCHAR_CLEARWATERBOXSTATE:
+    case CGETCHAR_CLEANWATERBOXSTATE:
     case CGETCHAR_PUMP:
     case CGETCHAR_BATTERY:
     case CGETCHAR_CHARGE:
     case CGETCHAR_STATUS:
     case CGETCHAR_VOICEPROMPT:
-        AckgetCharStatusByMsgType(((msg_t *)pMsg)->msgType);
-        break;
-
     case CGETCHAR_COMMONFAULTDETECTION:
-        /** do what? nothing **/
+        AckgetCharStatusByMsgType(((msg_t *)pMsg)->msgType);
         break;
         
     case CGETCHAR_NETINFO:
@@ -209,9 +207,18 @@ int sysProcess(void *pMsg)
     case CGETDEVINFO_RSPOK:  /** according protocal report Services after devInfo reported ok **/
         (void)reportService(0);
         break;
-        
-    case CREPORT_RSPOK:
+
+    case CSETCMDINTERVAL_RSPOK:
         /** do nothing **/
+        break;
+
+    case CSETCMDINTERVAL_RSPERROR:
+        /** do nothing **/
+        break;
+
+    case CREPORT_RSPOK:
+        /** do nothing or do something here **/
+        (void)reportSetCmdInterval();
         break;
 
     case CHEART_BEAT:
@@ -309,8 +316,8 @@ Triplet_u8u8pu8_t const voiceIdx2status[] = {
     //{vopIdx_CisternOk, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =24,//ˮϤґ°²װ
     //{vopIdx_CisternNo, CINDEX_STANDBY, &(g_componentStatus.battery)},  // =25,//ˮϤґȡ³ö
     //{vopIdx_CisternTake,CINDEX_STANDBY,  &(g_componentStatus.battery)},  // =26,//ˮϤґȡ³ö£¬½øȫ´󋮳叴ģʽ
-    {vopIdx_sewageErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =27,//ΛˮϤґº£¬ǫǥÀ펛ˮϤ
-    {vopIdx_ClearErr, CINDEX_CLEARWATERSHORTAGE, &(g_componentStatus.clearWater)},  // =28,//ǫ¼ӈ뇥ˮ
+    {vopIdx_sewageErr, CINDEX_CLEANWATERSHORTAGE, &(g_componentStatus.cleanWater)},  // =27,//ΛˮϤґº£¬ǫǥÀ펛ˮϤ
+    {vopIdx_ClearErr, CINDEX_CLEANWATERSHORTAGE, &(g_componentStatus.cleanWater)},  // =28,//ǫ¼ӈ뇥ˮ
     // {vopIdx_PumpErr, CINDEX_STANDBY, &(g_componentStatus.clearWater)},  // =29,//ˮ±õ绺Ҭ³£
     // {nop5, CINDEX_STANDBY,  &(g_componentStatus.clearWater)},  // =30,//ˮ±õ绺δ°²װ
     
@@ -342,11 +349,28 @@ RetStatus reportStatusByvoiceIdx(u8 idx)
     return PERROR;
 }
 
+RetStatus setCommonFaultStatusByComponent(void)
+{
+    if (g_componentStatus.roller == CINDEX_ROLLEROVERLOAD) {
+        g_componentStatus.commonFaultDetection = g_componentStatus.roller;
+        return POK;
+    } else if (g_componentStatus.pump == CINDEX_PUMPCURRENTSMALL) { /** D7 has no this feature(ability) **/
+        g_componentStatus.commonFaultDetection = g_componentStatus.pump;
+        return POK;
+    } else if (g_componentStatus.charge == CINDEX_CHARGEFAULT) {
+        g_componentStatus.commonFaultDetection = g_componentStatus.charge;
+        return POK;
+    }
+
+    g_componentStatus.commonFaultDetection = CINDEX_NODEFAULT;
+    return POK;
+}
+
 /*****************************************************************************/
 static const pair_msgType2u8ptr_t msgType2u8ptr[] = {
     {CGETCHAR_ROLLER,             &(g_componentStatus.roller)},
     {CGETCHAR_PUMP,               &(g_componentStatus.pump)},
-    {CGETCHAR_CLEARWATERBOXSTATE, &(g_componentStatus.clearWater)},
+    {CGETCHAR_CLEANWATERBOXSTATE, &(g_componentStatus.cleanWater)},
     {CGETCHAR_BATTERY,            &(g_componentStatus.battery)},
     {CGETCHAR_CHARGE,             &(g_componentStatus.charge)},
     {CGETCHAR_STATUS,             &(g_componentStatus.status)},

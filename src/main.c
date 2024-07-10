@@ -84,10 +84,10 @@ ComponentField_t g_componentStatus = {
     .pump                 = CINDEX_PUMPNORMAL,
     .battery              = CINDEX_BATTERYNORMAL,
     .charge               = CINDEX_UNCHARGED,
-    .clearWater           = CINDEX_CLEARWATERNORMAL,
+    .cleanWater           = CINDEX_CLEANWATERNORMAL,
     .status               = CINDEX_STANDBY,
     .voicePrompt          = CINDEX_VOICEPROMPT_ON,
-    .commonFaultDetection = CINDEX_STANDBY,
+    .commonFaultDetection = CINDEX_NODEFAULT,
     .netConnection        = CINDEX_NETCONNECTION_OFF,
 };
 /******************************************************************************/
