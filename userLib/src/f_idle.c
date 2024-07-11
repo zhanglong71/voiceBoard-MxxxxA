@@ -32,7 +32,8 @@ int f_idle(void *pMsg)
         g_tick++;
 
         if ((g_tick % CREPORT_PERIOD) == 1) {
-            if ((g_componentStatus.status != CINDEX_STANDBY) && (g_componentStatus.charge == CINDEX_CHARGING)) {
+            if (((g_componentStatus.status == CINDEX_STANDARD) || (g_componentStatus.status == CINDEX_HIGHPOWER)) &&
+                (g_componentStatus.charge == CINDEX_CHARGING)) {
                 /** work & charging, then exit **/
                 g_componentStatus.status = CINDEX_STANDBY;
             }

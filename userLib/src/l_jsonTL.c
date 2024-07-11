@@ -79,7 +79,7 @@ RetStatus reportSetCmdInterval(void)
 }
 
 /** get interval time(ms) **/
-RetStatus reportgetCmdInterval(void)
+RetStatus reportGetCmdInterval(void)
 {
     char buf[] = "getCmdInterval,0\n";
     return reportNobodyInfo(buf, strlen(buf));
@@ -922,15 +922,16 @@ RetStatus KeyBody2objType(u8 key_idx, objType_t* objType)
 }
 
 /******************************************************************************************/
+/** commonFaultDetection report, then roller/pump/charge no need report **/
 u8* ComponentFieldArr[] = {
-    &(g_componentStatus.roller),
-    &(g_componentStatus.pump),
+    // &(g_componentStatus.roller),
+    // &(g_componentStatus.pump),
     &(g_componentStatus.battery),
-    &(g_componentStatus.charge),
+    // &(g_componentStatus.charge),
     &(g_componentStatus.cleanWater),
     // &(g_componentStatus.status),
     // &(g_componentStatus.voicePrompt),
-    // &(g_componentStatus.commonFaultDetection),
+    &(g_componentStatus.commonFaultDetection),
     // &(g_componentStatus.netConnection),     // no need
 };
 void reportStatusOneByOne(void)

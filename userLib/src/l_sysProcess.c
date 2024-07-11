@@ -210,6 +210,7 @@ int sysProcess(void *pMsg)
 
     case CSETCMDINTERVAL_RSPOK:
         /** do nothing **/
+        reportGetCmdInterval();
         break;
 
     case CSETCMDINTERVAL_RSPERROR:
@@ -303,7 +304,7 @@ Triplet_u8u8pu8_t const voiceIdx2status[] = {
     {vopIdx_RUNm2, CINDEX_HIGHPOWER, &(g_componentStatus.status)},  // =13,//½øȫǿÁ¦ģʽ
     // {vopIdx_nop2, CINDEX_STANDBY, &(g_componentStatus.status},  // =14,//´󋮳叴ģʽ
     {vopIdx_RUNCL, CINDEX_CLEANING, &(g_componentStatus.status)},  // =15,//½øȫהǥϴģʽ
-    // {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.status},  // =16,//הǥϴґͪ³ɍ
+    {vopIdx_RunclOver, CINDEX_STANDBY, &(g_componentStatus.status)},  // =16,//הǥϴґͪ³ɍ
     
     {vopIdx_RUNover, CINDEX_STANDBY, &(g_componentStatus.status)},  // =17,//ԋА½ኸ£¬ǫ·Żصחùהǥϴ	
     

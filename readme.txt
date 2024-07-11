@@ -53,3 +53,4 @@ putChar,28,{"voiceprompt":{"switch":1}}\n
 2024/7/10 14:49:09 reportService之后增加指令间隔时长 setCmdInterval；
                    按合作方指导修改 cleanwaterboxstate(原为clearwaterboxstate,另有大小写区别) 命令关键字，相应的宏定义全部改掉; 
                    修改commonFaultDetection命令响应(原设计分散到roller/pump/charge状态中)，修改后将roller/pump/charge错误状态赋给 commonFaultDetection;
+2024/7/11 8:39:51 自清洗状态(上报3)完成进入待机状态(上报0)
