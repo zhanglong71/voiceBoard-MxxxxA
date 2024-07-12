@@ -129,8 +129,8 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     { CINDEX_CHARGEFAULT,         "{\"commonFaultDetection\":{\"code\":100}}"},               // charging fault
     { CINDEX_NODEFAULT,           "{\"commonFaultDetection\":{\"code\":000}}"},               // no fault
  /****/   
-    { CINDEX_CLEANWATERNORMAL,    "{\"cleanwaterboxstate\":{\"status\":0}}"},  // clear water normal
-    { CINDEX_CLEANWATERSHORTAGE,  "{\"cleanwaterboxstate\":{\"status\":1}}"},  // clear water shortage
+    { CINDEX_CLEANWATERNORMAL,    "{\"cleanwaterboxstate\":{\"Cleanwaterboxstate\":0}}"},  // clear water normal
+    { CINDEX_CLEANWATERSHORTAGE,  "{\"cleanwaterboxstate\":{\"Cleanwaterboxstate\":1}}"},  // clear water shortage
     
     { CINDEX_UNCHARGED,           "{\"battery\":{\"charging\":0}}"},           // Not Charging
     { CINDEX_CHARGING,            "{\"battery\":{\"charging\":1}}"},           // Charging
@@ -183,8 +183,6 @@ void reportBatteryLevel(u8 arg)
 {
     jsonTL_t jsonTypeTx;
     char buf[U8FIFOSIZE]; 
-    // u8 len = 0;
-    // u8Data_t u8Data;
     u8 idx = 0;
 
     for (idx = 0; idx < MTABSIZE(reportStatusBodyArr); idx++) {
@@ -198,6 +196,7 @@ void reportBatteryLevel(u8 arg)
 
     jsonTypeTx.jHead = "reportChar";
     sprintf(buf, reportStatusBodyArr[idx].body, arg);
+    // sprintf(buf, "{\"battery\":{\"level\":%u}}", arg);
     jsonTypeTx.jBody =buf;
     jsonTypeTx.jLen = strlen(jsonTypeTx.jBody);
 
@@ -600,6 +599,20 @@ char strip(char* str, char hch, char tch)
     }
 
     return (1);
+}
+
+u8 batteryVoltage2percent(u16 voltage)
+{
+#define CVOLTAGE_MAX (1580)
+#define CVOLTAGE_MIN (1300)
+    unsigned int tmp;
+    if (voltage >= CVOLTAGE_MAX) {
+        return 100;
+    } else if (voltage <= CVOLTAGE_MIN) {
+        return 0;
+    }
+    tmp = (voltage - CVOLTAGE_MIN) * 100 / (CVOLTAGE_MAX - CVOLTAGE_MIN);
+    return (u8)tmp;
 }
 
 /**

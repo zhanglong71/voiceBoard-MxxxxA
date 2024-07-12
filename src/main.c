@@ -89,6 +89,7 @@ ComponentField_t g_componentStatus = {
     .voicePrompt          = CINDEX_VOICEPROMPT_ON,
     .commonFaultDetection = CINDEX_NODEFAULT,
     .netConnection        = CINDEX_NETCONNECTION_OFF,
+    .bat_v                = 0,
 };
 /******************************************************************************/
 char g_buf[U8FIFOSIZE];    // Temporary variables for uart received data resolve

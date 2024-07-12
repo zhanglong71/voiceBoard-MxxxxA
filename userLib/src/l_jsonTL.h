@@ -14,6 +14,8 @@ jsonTL_t* getService(u8 idx);
 
 void sm_sendData(jsonTL_t* p);
 void sm_sendData_once(jsonTL_t* jp);
+u8 batteryVoltage2percent(u16 voltage);
+
 RetStatus strim(char* str) ;
 objType_t sm_receiveData(char *data);
 

@@ -126,6 +126,10 @@ int sysProcess(void *pMsg)
                  if (strstr(g_KVarr[i].key, "ask") && strstr(g_KVarr[i].value, "ver")) {
                      Mset_bit(flag,4);
                  }
+                 if (strstr(g_KVarr[i].key, "bat_v")) {  // !!!!!! The data takes effect immediately !!!!!!
+                     Mset_bit(flag,5);
+                     g_componentStatus.bat_v = atoi(g_KVarr[i].value);
+                 }
             }
             if (Mget_bit(flag, 1) && Mget_bit(flag, 2) && Mget_bit(flag, 3)) {
                 if (voi < 100) {

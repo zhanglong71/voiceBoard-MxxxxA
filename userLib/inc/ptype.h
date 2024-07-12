@@ -407,6 +407,7 @@ typedef struct ComponentField_s{
      * voicePrompt can be updated by uart2(APP with cloud)
      * 
      **/
+     u16 bat_v;    // the battery voltage(x100)
 } ComponentField_t;
 
 typedef struct NetInfo_s{
