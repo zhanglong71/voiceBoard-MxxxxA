@@ -141,8 +141,8 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     
     { CINDEX_BATTERYLEVEL,        "{\"battery\":{\"level\":%u}}"},
     
-    { CINDEX_VOICEPROMPT_ON,      "{\"voicePormpt\":{\"switch\":1}}"},         // voice prompt on
-    { CINDEX_VOICEPROMPT_OFF,     "{\"voicePormpt\":{\"switch\":0}}"},         // voice prompt off
+    { CINDEX_VOICEPROMPT_ON,      "{\"voicePrompt\":{\"switch\":1}}"},         // voice prompt on
+    { CINDEX_VOICEPROMPT_OFF,     "{\"voicePrompt\":{\"switch\":0}}"},         // voice prompt off
 
     { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // 网络信息
     { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // 升级信息
@@ -940,10 +940,10 @@ u8* ComponentFieldArr[] = {
     // &(g_componentStatus.roller),
     // &(g_componentStatus.pump),
     &(g_componentStatus.battery),
-    // &(g_componentStatus.charge),
+    &(g_componentStatus.charge),
     &(g_componentStatus.cleanWater),
     // &(g_componentStatus.status),
-    // &(g_componentStatus.voicePrompt),
+    &(g_componentStatus.voicePrompt),
     &(g_componentStatus.commonFaultDetection),
     // &(g_componentStatus.netConnection),     // no need
 };

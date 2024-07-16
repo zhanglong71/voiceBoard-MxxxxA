@@ -42,14 +42,12 @@ int f_idle(void *pMsg)
             reportComponentStatus(g_componentStatus.status);
         }
 
-        if ((g_tick % (CVOLTAGE_PERIOD)) == 1) {
+        if ((g_tick % (CVOLTAGE_PERIOD)) == 2) {
             generateAskstatus();
-        } else if ((g_tick % (CVOLTAGE_PERIOD)) == 2) {
+        } else if ((g_tick % (CVOLTAGE_PERIOD)) == 3) {
             tmp = batteryVoltage2percent(g_componentStatus.bat_v);
             reportBatteryLevel(tmp);
-        }
-
-        if (g_componentStatus.netConnection == CINDEX_NETCONNECTION_ON) {
+        } else if (g_componentStatus.netConnection == CINDEX_NETCONNECTION_ON) { /** !!!!!! Avoiding conflicts !!!!!! **/
             reportStatusOneByOne();
         }
         break;

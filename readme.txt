@@ -57,3 +57,4 @@ putChar,28,{"voiceprompt":{"switch":1}}\n
 2024/7/12 19:04:17 修改后的版本：
                    a. 净水箱数据上报，格式修改为：reportChar,47,{"cleanwaterboxstate":{"Cleanwaterboxstate":1}}
                    b. 电量数据定时上报：先向主控查数据，再上报给云端！格式 reportChar,24,{"battery":{"level":89}}
+2024/7/16 9:52:52 上电开机，补充充电状态上报(语音开关状态上报也顺手添加)；改正voicePrompt应答时单词拼写错
