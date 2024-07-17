@@ -138,8 +138,8 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     
     { CINDEX_BATTERYNORMAL,       "{\"battery\":{\"alarm\":0}}"},              // Normal battery level
     { CINDEX_BATTERYLOW,          "{\"battery\":{\"alarm\":1}}"},              // Low voltage(Low battery)
-    
-    { CINDEX_BATTERYLEVEL,        "{\"battery\":{\"level\":%u}}"},
+
+    { CINDEX_BATTERY,             "{\"battery\":{\"alarm\":%u,\"charging\":%u,\"level\":%u}}"},
     
     { CINDEX_VOICEPROMPT_ON,      "{\"voicePrompt\":{\"switch\":1}}"},         // voice prompt on
     { CINDEX_VOICEPROMPT_OFF,     "{\"voicePrompt\":{\"switch\":0}}"},         // voice prompt off
@@ -179,14 +179,18 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
 #endif
 };
 
-void reportBatteryLevel(u8 arg)
+
+void ackgetCharBattery(void)
 {
     jsonTL_t jsonTypeTx;
     char buf[U8FIFOSIZE]; 
     u8 idx = 0;
+    u8 charging = 0;
+    u8 batteryLow = 0;
+    u8 batteryLevel = batteryVoltage2percent(g_componentStatus.bat_v);
 
     for (idx = 0; idx < MTABSIZE(reportStatusBodyArr); idx++) {
-        if (reportStatusBodyArr[idx].index == CINDEX_BATTERYLEVEL) {
+        if (reportStatusBodyArr[idx].index == CINDEX_BATTERY) {
             break;
         }
     }
@@ -194,13 +198,55 @@ void reportBatteryLevel(u8 arg)
         return;
     }
 
-    jsonTypeTx.jHead = "reportChar";
-    sprintf(buf, reportStatusBodyArr[idx].body, arg);
-    // sprintf(buf, "{\"battery\":{\"level\":%u}}", arg);
+    if (g_componentStatus.charge == CINDEX_CHARGING) {
+        charging = 1;
+    }
+    
+    if (g_componentStatus.battery == CINDEX_BATTERYLOW) {
+        batteryLow = 1;
+    }
+
+    jsonTypeTx.jHead = "getChar";
+    sprintf(buf, reportStatusBodyArr[idx].body, batteryLow, charging, batteryLevel);
     jsonTypeTx.jBody =buf;
     jsonTypeTx.jLen = strlen(jsonTypeTx.jBody);
 
     sm_sendData_once(&jsonTypeTx);
+}
+
+void reportBattery(void)
+{
+    jsonTL_t jsonTypeTx;
+    char buf[U8FIFOSIZE]; 
+    u8 idx = 0;
+    u8 charging = 0;
+    u8 batteryLow = 0;
+    u8 batteryLevel = batteryVoltage2percent(g_componentStatus.bat_v);
+
+    for (idx = 0; idx < MTABSIZE(reportStatusBodyArr); idx++) {
+        if (reportStatusBodyArr[idx].index == CINDEX_BATTERY) {
+            break;
+        }
+    }
+    if (idx >= MTABSIZE(reportStatusBodyArr)) {
+        return;
+    }
+
+    if (g_componentStatus.charge == CINDEX_CHARGING) {
+        charging = 1;
+    }
+    
+    if (g_componentStatus.battery == CINDEX_BATTERYLOW) {
+        batteryLow = 1;
+    }
+
+    jsonTypeTx.jHead = "reportChar";
+    sprintf(buf, reportStatusBodyArr[idx].body, batteryLow, charging, batteryLevel);
+    jsonTypeTx.jBody =buf;
+    jsonTypeTx.jLen = strlen(jsonTypeTx.jBody);
+
+    sm_sendData_once(&jsonTypeTx);
+
 }
 
 RetStatus reportgetCharNetInfo(NetInfo_t* netInfo)
@@ -939,8 +985,8 @@ RetStatus KeyBody2objType(u8 key_idx, objType_t* objType)
 u8* ComponentFieldArr[] = {
     // &(g_componentStatus.roller),
     // &(g_componentStatus.pump),
-    &(g_componentStatus.battery),
-    &(g_componentStatus.charge),
+    // &(g_componentStatus.battery),
+    // &(g_componentStatus.charge),
     &(g_componentStatus.cleanWater),
     // &(g_componentStatus.status),
     &(g_componentStatus.voicePrompt),

@@ -80,7 +80,6 @@
 
 #define CINDEX_BATTERYNORMAL          (13)
 #define CINDEX_BATTERYLOW             (14)
-#define CINDEX_BATTERYLEVEL           (15)
 
 #define CINDEX_UNCHARGED              (16)
 #define CINDEX_CHARGING               (17)
@@ -111,6 +110,7 @@
 #define CINDEX_NETCONNECTION_ON       (43)
 
 // #define CINDEX_COMMONFAULTDETECTION   (49)
+#define CINDEX_BATTERY                (50)
 
 #define CINDEX_INVALID (0xff)
 

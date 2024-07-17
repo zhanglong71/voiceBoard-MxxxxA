@@ -21,10 +21,6 @@
 /*********************************************************************************************/
 int f_idle(void *pMsg)
 {
-//    int len;
-//    u8Data_t u8Data;
-    // char *ptr;
-    u8 tmp;
 #define CREPORT_PERIOD (11)
 #define CVOLTAGE_PERIOD (13)
     RetStatus retStatus = POK;
@@ -45,8 +41,7 @@ int f_idle(void *pMsg)
         if ((g_tick % (CVOLTAGE_PERIOD)) == 2) {
             generateAskstatus();
         } else if ((g_tick % (CVOLTAGE_PERIOD)) == 3) {
-            tmp = batteryVoltage2percent(g_componentStatus.bat_v);
-            reportBatteryLevel(tmp);
+            reportBattery();
         } else if (g_componentStatus.netConnection == CINDEX_NETCONNECTION_ON) { /** !!!!!! Avoiding conflicts !!!!!! **/
             reportStatusOneByOne();
         }

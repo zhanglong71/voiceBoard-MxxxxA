@@ -32,8 +32,9 @@ RetStatus reportService(unsigned *arg);
 // int reportReportCharCmd(void);
 RetStatus reportResetNet(void);
 RetStatus reportScanWifi(void);
-// int reportConnectWifi(void *arg);
-void reportBatteryLevel(u8 arg);
+void ackgetCharBattery(void);
+void reportBattery(void);
+
 RetStatus reportgetCharNetInfo(NetInfo_t* netInfo);
 RetStatus reportAckPutSync(void);
 RetStatus reportNobodyInfo(char* data, int len);

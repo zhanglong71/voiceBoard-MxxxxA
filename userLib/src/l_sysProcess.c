@@ -177,18 +177,20 @@ int sysProcess(void *pMsg)
         sm_sendData(NULL);
         break;
         
-    case CGETCHAR_MOP:
-    case CGETCHAR_ROLLER:
+    // case CGETCHAR_MOP:
+    // case CGETCHAR_ROLLER:
     case CGETCHAR_CLEANWATERBOXSTATE:
-    case CGETCHAR_PUMP:
-    case CGETCHAR_BATTERY:
-    case CGETCHAR_CHARGE:
+    // case CGETCHAR_PUMP:
+    // case CGETCHAR_CHARGE:
     case CGETCHAR_STATUS:
     case CGETCHAR_VOICEPROMPT:
     case CGETCHAR_COMMONFAULTDETECTION:
         AckgetCharStatusByMsgType(((msg_t *)pMsg)->msgType);
         break;
         
+    case CGETCHAR_BATTERY:
+        ackgetCharBattery();
+        break;
     case CGETCHAR_NETINFO:
         checkAndAckGetCharNetInfo();
         break;
