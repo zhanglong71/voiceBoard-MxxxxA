@@ -21,7 +21,7 @@
 RetStatus reportDevInfo(unsigned *arg)
 {
     (void)arg;
-    jsonTL_t* p = getDevInfo(0);
+    jsonTL_t* p = getDevInfo(2);
     sm_sendData(p);
     return (POK);
 }
@@ -375,7 +375,15 @@ int getCharAckComponentStatus(u8 statusIndex)
     return 0;
 }
 
-/*********************************************************************/
+/*******************************************************************
+ * 
+ * input:
+ *   0 - AP
+ *   1 - BLE(default/NFC touch)
+ *   2 - BLE(default/NFC touch)
+ * output: no
+ * return: *jsonTL_t
+ *******************************************************************/
 jsonTL_t* getDevInfo(u8 idx)
 {
     static jsonTL_t jsonTypeDevInfo[] = {
@@ -397,66 +405,46 @@ jsonTL_t* getDevInfo(u8 idx)
             //"\"marketName\":\"DIISEA-D7\","
             "\"brand\":\"DIISEA\"}"
         },
-        #if 0
         {
             "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
+            "{\"v\":\"1.0.0\","
             "\"dv\":\"1.0.0\","
             "\"prodId\":\"2NPQ\","
             "\"deviceTypeId\":\"19F\","
             "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
-            "\"deviceTypeNameEn\":\"Scrubber\","
-            "\"manufacturerNameEn\":\"DIISEA\","
-            "\"networkType\":\"AP\","
-            "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            //"\"marketName\":\"DIISEA-DM6\","
-            "\"brand\":\"滴水科技\"}"
-        },
-        {
-            "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
-            "\"dv\":\"1.0.0\","
-            "\"prodId\":\"2NPQ\","
-            "\"deviceTypeId\":\"19F\","
-            "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
+            "\"deviceModel\":\"D7\","
             "\"deviceTypeNameEn\":\"Scrubber\","
             "\"manufacturerNameEn\":\"DIISEA\","
             "\"networkType\":\"BLE\","
             "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            //"\"marketName\":\"DIISEA-DM6\","
-            "\"brand\":\"滴水科技\"}"
+            "\"productSeries\":\"DM\","
+            "\"productKey\":\"292a6ce5e37b4f3d823990d7370b7094\","
+            "\"marketName\":\"滴水洗地机D7\","
+            //"\"marketName\":\"DIISEA-D7\","
+            "\"brand\":\"DIISEA\"}"
         },
-
         {
             "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
+            "{\"v\":\"1.0.0\","
             "\"dv\":\"1.0.0\","
             "\"prodId\":\"2NPQ\","
             "\"deviceTypeId\":\"19F\","
             "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
+            "\"deviceModel\":\"D7\","
             "\"deviceTypeNameEn\":\"Scrubber\","
             "\"manufacturerNameEn\":\"DIISEA\","
             "\"networkType\":\"BLE\","
             "\"near\":{"
-                "\"type\":1,"
+                "\"type\":0,"
                 "\"trp\":-8"
             "},"
             "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            "\"brand\":\"滴水科技\"}"
+            "\"productSeries\":\"DM\","
+            "\"productKey\":\"292a6ce5e37b4f3d823990d7370b7094\","
+            "\"marketName\":\"滴水洗地机D7\","
+            //"\"marketName\":\"DIISEA-D7\","
+            "\"brand\":\"DIISEA\"}"
         }
-        #endif
     };
 
     if (idx >= MTABSIZE(jsonTypeDevInfo)) {
