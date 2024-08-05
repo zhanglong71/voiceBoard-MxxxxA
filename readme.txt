@@ -60,4 +60,5 @@ putChar,28,{"voiceprompt":{"switch":1}}\n
 2024/7/16 9:52:52 上电开机，补充充电状态上报(语音开关状态上报也顺手添加)；改正voicePrompt应答时单词拼写错
                   单独添加一个上报及响应getChar,11,battery的body: {"battery":{"alarm":%u,"charging":%u,"level":%u}}, 替换原来的定时上报及查询应答; 语音播放响应保持原逻辑单独上报(是否电压低、是否充电状态)不变
 2024/7/18 17:21:42 电池状态(低压、充电、电量)上报周期改为31s
+2024/8/5 07:56:47 无故障状态值commonFaultDetection修改(000 -> 0); 半废弃代码reportgetCharNetInfo()整理
                   

@@ -127,7 +127,7 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     
     { CINDEX_CHARGEREPAIR,        "{\"commonFaultDetection\":{\"code\":101}}"},               // charging fault recover to normal
     { CINDEX_CHARGEFAULT,         "{\"commonFaultDetection\":{\"code\":100}}"},               // charging fault
-    { CINDEX_NODEFAULT,           "{\"commonFaultDetection\":{\"code\":000}}"},               // no fault
+    { CINDEX_NODEFAULT,           "{\"commonFaultDetection\":{\"code\":0}}"},               // no fault
  /****/   
     { CINDEX_CLEANWATERNORMAL,    "{\"cleanwaterboxstate\":{\"Cleanwaterboxstate\":0}}"},  // clear water normal
     { CINDEX_CLEANWATERSHORTAGE,  "{\"cleanwaterboxstate\":{\"Cleanwaterboxstate\":1}}"},  // clear water shortage
@@ -259,43 +259,6 @@ RetStatus reportgetCharNetInfo(NetInfo_t* netInfo)
         return (PERROR);
     }
     
-#if 0
-    strncpy(g_netInfo.rssi, "-17", MTABSIZE(g_netInfo.rssi));
-    strncpy(g_netInfo.ssid, "DIISEA-ssid", MTABSIZE(g_netInfo.ssid));
-    strncpy(g_netInfo.ip,   "10.23.45.67", MTABSIZE(g_netInfo.ip));
-    strncpy(g_netInfo.mac,  "ab:cd:ef:01:23:45", MTABSIZE(g_netInfo.mac));
-
-    // "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"
-    strcpy(buf, "{\"netInfo\":{\"IP\":");
-    strcat(buf, g_netInfo.ip);
-    strcat(buf, ",\"RSSI\":");
-    strcat(buf, g_netInfo.rssi);
-    strcat(buf, ",\"SSID\":");
-    strcat(buf, g_netInfo.ssid);
-    strcat(buf, "}}");
-    
-    // sprintf(buf, "IP:%s, RSSI: %s, SSID: %s", netInfo->ip, netInfo->rssi, netInfo->ssid);
-    // sprintf(buf, "IP:%s, RSSI: %s, SSID: %s", g_netInfo.ip, g_netInfo.rssi, g_netInfo.ssid);
-    // sprintf(buf, "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}", g_netInfo.ip, g_netInfo.rssi, g_netInfo.ssid);
-    
-    // sprintf(buf, "{\"netInfo\":{\"RSSI\":%s}}", g_netInfo.rssi);      // ������Ч
-    // sprintf(buf, "{\"netInfo\":{\"SSID\":%s}}", g_netInfo.ssid);      // ������Ч
-    // sprintf(buf, "{\"netInfo\":{\"IP\":%s}}", g_netInfo.ip);             // ��Ч
-    // sprintf(buf, "{\"netInfo\":{\"MAC\":%s}}", g_netInfo.mac);
-
-    //strncpy(buf, "IP: 10.23.45.67", MTABSIZE(buf));  // ������Ч
-    //strncpy(buf, g_netInfo.ip, MTABSIZE(buf));       // ������Ч
-    //strcpy(buf, g_netInfo.ip);                       // ������Ч
-    //strcpy(buf, g_netInfo.mac);                        // ������Ч
-    
-    // sprintf(buf, "IP: %s", "10.23.45.67");       // ������Ч
-    // sprintf(buf, "%s", g_netInfo.ip);            // ��Ч
-    u8Data_t u8Data;
-    for (int i = 0; i < strlen(buf); i++) {
-        u8Data.u8Val = buf[i];
-        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-    }
-#else
     for (idx = 0; idx < MTABSIZE(reportStatusBodyArr); idx++) {
         if (reportStatusBodyArr[idx].index == CINDEX_NETINFO) {
             break;
@@ -306,23 +269,13 @@ RetStatus reportgetCharNetInfo(NetInfo_t* netInfo)
     }
 
     jsonTypeTx.jHead = "getChar";
-    //sprintf(buf, reportStatusBodyArr[idx].body, netInfo->ip, netInfo->rssi, netInfo->ssid);
-    //sprintf(buf, reportStatusBodyArr[idx].body, "0:0:0:0", "-19", "DIISEA-ssid");
-    
-    // the complete command like this: "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"
-    strcpy(buf, "{\"netInfo\":{\"IP\":");
-    strcat(buf, netInfo->ip);
-    strcat(buf, ",\"RSSI\":");
-    strcat(buf, netInfo->rssi);
-    strcat(buf, ",\"SSID\":");
-    strcat(buf, netInfo->ssid);
-    strcat(buf, "}}");
-    
+    sprintf(buf, reportStatusBodyArr[idx].body, netInfo->ip, netInfo->rssi, netInfo->ssid);
+
     jsonTypeTx.jBody = buf;
     jsonTypeTx.jLen = strlen(jsonTypeTx.jBody);
 
     sm_sendData_once(&jsonTypeTx);
-#endif
+
     return (POK);
 }
 
