@@ -16,7 +16,6 @@
 #include "l_gpio.h"
 #include "l_jsonTL.h"
 #include "l_rs485.h"
-// #include "main.h"
 
 RetStatus reportDevInfo(unsigned *arg)
 {
@@ -85,32 +84,7 @@ RetStatus reportGetCmdInterval(void)
     return reportNobodyInfo(buf, strlen(buf));
 }
 
-#if 0
-RetStatus reportWifiConnected(void)
-{
-    char buf[] = "wifi,1,1\n";
-    return reportNobodyInfo(buf, strlen(buf));
-}
-
-RetStatus reportWifiDisConnected(void)
-{
-    char buf[] = "wifi,1,0\n";
-    return reportNobodyInfo(buf, strlen(buf));
-}
-#endif
-
-#if 0   // !!! 
-int reportConnectWifi(void *arg)
-{
-    (void)arg;
-    jsonTL_t* p = getConnectWifi(0);
-    sm_sendData(p);
-    return (TRUE);
-}
-#endif
-
 static const reportStatusBody_t reportStatusBodyArr[] = {
-#if 1
     { CINDEX_STANDBY,             "{\"status\":{\"status\":0}}"},              // standby
     { CINDEX_STANDARD,            "{\"status\":{\"status\":1}}"},              // standard
     { CINDEX_HIGHPOWER,           "{\"status\":{\"status\":2}}"},              // highPower
@@ -144,41 +118,9 @@ static const reportStatusBody_t reportStatusBodyArr[] = {
     { CINDEX_VOICEPROMPT_ON,      "{\"voicePrompt\":{\"switch\":1}}"},         // voice prompt on
     { CINDEX_VOICEPROMPT_OFF,     "{\"voicePrompt\":{\"switch\":0}}"},         // voice prompt off
 
-    { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // 网络信息
-    { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // 升级信息
-#else
-    { CINDEX_CONNECTED,           "{\"status\":{\"status\":1}}"},             // on line
-    // { CINDEX_UNKNOW,              "{\"mop\":{\"status\":0}}"},             // unknow 未知状态(主机断开及其它)
-    { CINDEX_STANDBY,             "{\"mop\":{\"status\":1}}"},             // standby 待机
-    { CINDEX_STANDARD,            "{\"mop\":{\"status\":2}}"},                   // standard 标准模式
-    { CINDEX_HIGHPOWER,           "{\"mop\":{\"status\":3}}"},                   // highPower强力模式
-    // { CINDEX_RINSE,               "{\"mop\":{\"status\":4}}"},                   // rinse 大水冲洗模式
-    // { CINDEX_CLEANING,            "{\"mop\":{\"status\":5}}"},                   // cleaning 自清洗模式
-    
-    { CINDEX_ROLLERNORMAL,        "{\"roller\":{\"status\":1}}"},                // normal 滚筒电机正常
-    { CINDEX_ROLLEROVERLOAD,      "{\"roller\":{\"status\":2}}"},                // error 滚筒电机故障
-    
-    { CINDEX_CLEARWATERNORMAL,    "{\"clearWater\":{\"status\":1}}"},             // clear water normal 清水正常
-    { CINDEX_CLEARWATERSHORTAGE,  "{\"clearWater\":{\"status\":2}}"},             // clear water shortage 清水不足
-    
-    { CINDEX_PUMPNORMAL,          "{\"pump\":{\"status\":1}}"},                  // 水泵正常     pumpNormal
-    // { CINDEX_PUMPOVERLOAD,        "{\"pump\":{\"status\":2}}"},                  // 水泵过载     pumpOverload
-    // { CINDEX_PUMPCURRENTSMALL,    "{\"pump\":{\"status\":3}}"},                  // 水泵电流过小 pumpCurrentTooSmall
-    
-    { CINDEX_BATTERYNORMAL,       "{\"batterystatus\":{\"status\":1}}"},      // 电池电压在正常范围
-    { CINDEX_BATTERYLOW,          "{\"batterystatus\":{\"status\":2}}"},      // 电池电压过低
-    { CINDEX_BATTERYLEVEL,        "{\"batterystatus\":{\"level\":%u}}"},
-    
-    { CINDEX_UNCHARGED,           "{\"charge\":{\"status\":1}}"},         // 没充电
-    { CINDEX_CHARGING,            "{\"charge\":{\"status\":2}}"},         // 正在充电
-    { CINDEX_CHARGECOMPLETE,      "{\"charge\":{\"status\":3}}"},         // 充电完成(区别不充电场景)
-    { CINDEX_CHARGEFAULT,         "{\"charge\":{\"status\":4}}"},         // 充电故障
-    
-    { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},         // 网络信息
-    { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},         // 升级信息
-#endif
+    { CINDEX_NETINFO,             "{\"netInfo\":{\"IP\":%s,\"RSSI\":%s,\"SSID\":%s}}"},
+    { CINDEX_UPDATE,              "{\"update\":{\"versoin\":1.0.1,\"introduction\":newest,\"progress\":100,\"bootTime\":60}}"},
 };
-
 
 void ackgetCharBattery(void)
 {
@@ -350,66 +292,6 @@ jsonTL_t* getDevInfo(u8 idx)
             //"\"marketName\":\"DIISEA-D7\","
             "\"brand\":\"DIISEA\"}"
         },
-        #if 0
-        {
-            "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
-            "\"dv\":\"1.0.0\","
-            "\"prodId\":\"2NPQ\","
-            "\"deviceTypeId\":\"19F\","
-            "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
-            "\"deviceTypeNameEn\":\"Scrubber\","
-            "\"manufacturerNameEn\":\"DIISEA\","
-            "\"networkType\":\"AP\","
-            "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            //"\"marketName\":\"DIISEA-DM6\","
-            "\"brand\":\"滴水科技\"}"
-        },
-        {
-            "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
-            "\"dv\":\"1.0.0\","
-            "\"prodId\":\"2NPQ\","
-            "\"deviceTypeId\":\"19F\","
-            "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
-            "\"deviceTypeNameEn\":\"Scrubber\","
-            "\"manufacturerNameEn\":\"DIISEA\","
-            "\"networkType\":\"BLE\","
-            "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            //"\"marketName\":\"DIISEA-DM6\","
-            "\"brand\":\"滴水科技\"}"
-        },
-
-        {
-            "getDevInfo", 0,
-            "{\"v\":\"1.0.1\","
-            "\"dv\":\"1.0.0\","
-            "\"prodId\":\"2NPQ\","
-            "\"deviceTypeId\":\"19F\","
-            "\"manufacturerId\":\"hlp\","
-            "\"deviceModel\":\"DM6\","
-            "\"deviceTypeNameEn\":\"Scrubber\","
-            "\"manufacturerNameEn\":\"DIISEA\","
-            "\"networkType\":\"BLE\","
-            "\"near\":{"
-                "\"type\":1,"
-                "\"trp\":-8"
-            "},"
-            "\"acKey\":\"2B5F3377287C4920506E604B326D5A6479F44A6942B1FE3C86CAD3E3A5F9654D6BC810E9D216466D843A0385A723CC8E\","
-            "\"productSeries\":\"DM6\","
-            "\"productKey\":\"f2b80c7c77b840e4b7017029baab9bf6\","
-            "\"marketName\":\"滴水洗地机DM6\","
-            "\"brand\":\"滴水科技\"}"
-        }
-        #endif
     };
 
     if (idx >= MTABSIZE(jsonTypeDevInfo)) {
@@ -424,48 +306,7 @@ jsonTL_t* getService(u8 idx)
         {
             "reportService", 0,
             "{"
-            #if 0
-                "\"sId\":["
-                    "\"status\","
-                    "\"charge\","
-                    "\"clearWater\","
-                    "\"roller\","
-                    "\"batterystatus\","
-                    "\"mop\","
-                    "\"netInfo\","
-                    "\"update\""
-                    "],"
-                "\"sType\":["
-                    "\"status\","
-                    "\"charge\","
-                    "\"clearWater\","
-                    "\"roller\","
-                    "\"batterystatus\","
-                    "\"mop\","
-                    "\"netInfo\","
-                    "\"update\""
-                "]"
-            #else
-                #if 0
-                "\"sId\":["
-                    "\"status\","
-                    "\"charge\","
-                    "\"clearWater\","
-                    "\"roller\","
-                    "\"batterystatus\","
-                    "\"mop\","
-                    "\"netInfo\""
-                    "],"
-                "\"sType\":["
-                    "\"status\","
-                    "\"charge\","
-                    "\"clearWater\","
-                    "\"roller\","
-                    "\"batterystatus\","
-                    "\"mop\","
-                    "\"netInfo\""
-                "]"
-                #else
+            #if 1
                 "\"sId\":["
                     "\"cleanwaterboxstate\","
                     "\"battery\","
@@ -480,11 +321,9 @@ jsonTL_t* getService(u8 idx)
                     "\"fault\","
                     "\"voicePrompt\""
                 "]"
-                #endif
             #endif
             "}"
         }
-       // {"reportService", 0, ""}
     };
 
     if (idx >= MTABSIZE(ServiceArr)) {
@@ -492,26 +331,6 @@ jsonTL_t* getService(u8 idx)
     }
     return (&ServiceArr[idx]);
 }
-
-#if 0
-jsonTL_t* getConnectWifi(u8 idx)
-{
-    static jsonTL_t ConnectWifiArr[] = {
-        {
-            "connectWifi", 0,
-            "{"
-            "\"ssid\":\"hilink_production_test\","
-            "\"password\":\"12345678\""
-            "}"
-        }
-    };
-    if (idx >= MTABSIZE(ConnectWifiArr)) {
-        return (NULL);
-    }
-
-    return (&ConnectWifiArr[idx]);
-}
-#endif
 
 /**
  * ��sprintf()ת�����ֵ��ַ���ʱ���ֹ���! ԭ��δ֪! �ô˺������
@@ -980,12 +799,6 @@ objType_t sm_receiveData(char *data)
     if (u8FIFOout2_irq(&g_uart2RxQue, &u8Data) == TRUE) {
         chData = u8Data.u8Val;
     }
-    // ??????????????????????????????
-#if 0 
-        u8Data.u8Val = chData;
-        u8FIFOin_irq(&g_uart2TxQue, &u8Data);
-#endif
-    // ??????????????????????????????
 
     if (s_smStatus == sm_init) {   /** identifing key **/
         if (chData != ',') {
@@ -1118,37 +931,6 @@ RetStatus reportgetRssi(void)
     return reportNobodyInfo(buf, strlen(buf));
 }
 /*******************************************************************************/
-#if 0
-/*******************************************************************************
- * remove the head and tail blank character
- *******************************************************************************/
-void trim(char* str) 
-{
-    char *end, *sp, *ep;
-    int len;
-    
-    sp = str;
-    end = str + strlen(str) - 1;
-    ep = end;
-    
-    while((sp < end) && isspace(*sp)) {   /** head blank **/
-        sp++;
-    }
-    while((ep >= sp) && isspace(*ep)) {    /** tail blank **/
-        ep--;
-    }
-    len = ((ep < sp) ? 0:((ep - sp) + 1));
-    sp[len] = '\0';
-
-    /****/
-    if (str != sp) {
-        for (int i = 0; i < len; i++) {
-            str[i] = sp[i];
-        }
-    }
-}
-#endif
-
 /** find first fch, and last lch **/
 char isCoupled(char* str, char hch, char tch) 
 {
