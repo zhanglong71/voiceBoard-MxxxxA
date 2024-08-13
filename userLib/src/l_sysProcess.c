@@ -126,7 +126,8 @@ int sysProcess(void *pMsg)
                  if (strstr(g_KVarr[i].key, "ask") && strstr(g_KVarr[i].value, "ver")) {
                      Mset_bit(flag,4);
                  }
-                 if (strstr(g_KVarr[i].key, "bat_v")) {  // !!!!!! The data takes effect immediately !!!!!!
+                 if ((strstr(g_KVarr[i].key, "bv") && strstr("bv", g_KVarr[i].key)) ||
+                     (strstr(g_KVarr[i].key, "bat_v") && strstr("bat_v", g_KVarr[i].key))) {  // !!!!!! The data takes effect immediately !!!!!!
                      Mset_bit(flag,5);
                      g_componentStatus.bat_v = atoi(g_KVarr[i].value);
                  }
