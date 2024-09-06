@@ -21,7 +21,7 @@
 /*********************************************************************************************/
 int f_idle(void *pMsg)
 {
-#define CREPORT_PERIOD (30)
+#define CREPORT_PERIOD (7)
 #define CVOLTAGE_PERIOD (31)
     RetStatus retStatus = POK;
     switch(((msg_t *)pMsg)->msgType) 
